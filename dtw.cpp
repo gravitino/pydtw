@@ -26,7 +26,7 @@ ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H) {
         for (itype j = 1; j < Hsize+1; ++j) {
             ftype cost = N->at(i-1)-H->at(j-1);
             
-            // Euclidian or Manhatten distance?
+            // Euclidean or Manhatten distance?
             if (squared)
                 cost *= cost;
             else
