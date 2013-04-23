@@ -3,8 +3,10 @@
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) < (y) ? (y) : (x))
 #define min3(x, y, z) (min(x, min(y, z)))
+#define argmin3(x, y, z) ((x < y && x < z) ? 0 : (y < z ? 1 : 2))
 #define sgn(x) ((x) < 0 ? -1 : 1)
 #define abs(x) ((x)*sgn(x))
+#define unused(x) ((void)x)
 
 template <class itype, class ftype, bool squared> 
 ftype meta_lp12(std::vector<ftype>* N, std::vector<ftype>* H) {
@@ -25,14 +27,21 @@ ftype meta_lp12(std::vector<ftype>* N, std::vector<ftype>* H) {
     return sum;
 }
 
-template <class itype, class ftype, bool constrained, bool squared> 
-ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w) {
+template <class itype, class ftype, bool constrained, bool squared, bool backtrace> 
+ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w, std::vector<std::pair<itype, itype> >* path) {
 
     // vector sizes for convenience
     const itype Nsize = N->size(), Hsize = H->size();
     
     // alloc penalty matrix
     ftype *pen = new ftype[(Nsize+1)*(Hsize+1)];
+    char *pre = 0;
+  
+    if (backtrace) {
+        pre = new char[(Nsize+1)*(Hsize+1)];
+    } else {
+        unused(pre);
+    }
   
     if (constrained) {
     
@@ -80,39 +89,102 @@ ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w) {
             pen[i*(Hsize+1)+j] = cost+min3(pen[(i-1)*(Hsize+1)+j], 
                                            pen[(i-1)*(Hsize+1)+j-1], 
                                            pen[i*(Hsize+1)+j-1]);
+            
+            if (backtrace) {
+                // remember predecessor node
+                pre[i*(Hsize+1)+j] = argmin3(pen[(i-1)*(Hsize+1)+j], 
+                                             pen[(i-1)*(Hsize+1)+j-1], 
+                                             pen[i*(Hsize+1)+j-1]);
+            }
         }
     }
     
+    // remember the optimal distance measure
     const ftype dist = pen[(Nsize+1)*(Hsize+1)-1];
     
+    // free memory
     delete [] pen;
+    
+    if (backtrace) {
+        
+        // overwrite existing warping path
+        path->clear();
+        
+        // start at the end of the warping path
+        itype i = Nsize, j = Hsize;
+        
+        // until starting node reached
+        while (i != 0 && j !=0) {
+        
+            // add node to warping path
+            path->push_back(std::pair<itype, itype>(i, j));
+            
+            // manipulate indices of needle
+            if (pre[i*(Hsize+1)+j] < 2) 
+                i -= 1;
+            
+            // manipulate indices of haystack
+            if (pre[i*(Hsize+1)+j] > 0)
+                j -= 1;
+        }
 
+        // reverse the warping path
+        std::reverse(path->begin(), path->end());
+    
+        // free memory
+        delete [] pre;
+    }
+    
     return dist;
 }
 
-float euclidean(std::vector<float> *N, std::vector<float> *H) {
+// wrapper functions
+
+float dist_euclidean(std::vector<float> *N, std::vector<float> *H) {
      
         return meta_lp12<unsigned int, float, true>(N, H);
 }
 
-float manhatten(std::vector<float> *N, std::vector<float> *H) {
+float dist_manhatten(std::vector<float> *N, std::vector<float> *H) {
      
         return meta_lp12<unsigned int, float, false>(N, H);
 }
 
-float dtw(std::vector<float> *N, std::vector<float> *H, bool squared) {
+float dist_dtw(std::vector<float> *N, std::vector<float> *H, bool squared) {
      
      if (squared)
-        return meta_dtw<unsigned int, float, false, true>(N, H, 0);
+        return meta_dtw<unsigned int, float, false, true, false>(N, H, 0, 0);
      else
-        return meta_dtw<unsigned int, float, false, false>(N, H, 0);
+        return meta_dtw<unsigned int, float, false, false, false>(N, H, 0, 0);
 }
 
-float cdtw(std::vector<float> *N, std::vector<float> *H, unsigned int w ,bool squared) {
+float dist_dtw_backtrace(std::vector<float> *N, std::vector<float> *H, 
+                    std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
      
      if (squared)
-        return meta_dtw<unsigned int, float, true, true>(N, H, w);
+        return meta_dtw<unsigned int, float, false, true, true>(N, H, 0, path);
      else
-        return meta_dtw<unsigned int, float, true, false>(N, H, w);
+        return meta_dtw<unsigned int, float, false, false, true>(N, H, 0, path);
 }
+
+float dist_cdtw(std::vector<float> *N, std::vector<float> *H, unsigned int w ,bool squared) {
+     
+     if (squared)
+        return meta_dtw<unsigned int, float, true, true, false>(N, H, w, 0);
+     else
+        return meta_dtw<unsigned int, float, true, false, false>(N, H, w, 0);
+}
+
+float dist_cdtw_backtrace(std::vector<float> *N, std::vector<float> *H, unsigned int w, 
+                          std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
+     
+     if (squared)
+        return meta_dtw<unsigned int, float, true, true, true>(N, H, w, path);
+     else
+        return meta_dtw<unsigned int, float, true, false, true>(N, H, w, path);
+}
+
+
+
+
 

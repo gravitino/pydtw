@@ -1,26 +1,32 @@
 import libdtw as dtw
+import pylab as pl
 import math as m
 
 # define query and subject as shifted cosine waves
 query = dtw.TimeSeries([m.cos(i/128.0) * m.exp(-0.5*(i-512)**2/256**2) for i in range(1024)])
 subject = dtw.TimeSeries([m.cos(i/128.0+1) * m.exp(-0.5*(i-512)**2/256**2) for i in range(1024)])
 
-print "EUCLIDEAN\n"
+pl.title("query and subject")
+pl.plot(query)
+pl.plot(subject)
+pl.show()
 
-print "Euclidean DTW:", dtw.dtw(query, subject, True)
-print "Euclidean constrained DTW:", dtw.cdtw(query, subject, 32, True)
-print "Euclidean L_2-norm:", dtw.euclidean(query, subject)
+for mode, name in [(True, 'Euclidean'), (False, 'Manhatten')]:
 
-print "\nMANHATTEN\n"
+    print  dtw.dist_euclidean(query, subject) \
+           if mode == True else \
+           dtw.dist_manhatten(query, subject)
+    
+    pl.imshow([[abs(query[i]-subject[j]) for j in range(len(subject))] 
+                                         for i in range(len(query))])
+    
+    for window in range(1, max(len(subject), len(query)), 32):
+        gamma = dtw.WarpingPath()
+        print dtw.dist_cdtw_backtrace(query, subject, window, gamma, mode)
+        pl.plot(*zip(*[node[::-1] for node in gamma]))
 
-print "Manhatten DTW:", dtw.dtw(query, subject)
-print "Manhatten constrained DTW:", dtw.cdtw(query, subject, 32)
-print "Manhatten L_1-norm:", dtw.manhatten(query, subject)
+    print dtw.dist_dtw(query, subject, mode)
 
-try:
-    import pylab as pl
-    pl.plot(query)
-    pl.plot(subject)
+    pl.title(name)
     pl.show()
-except:
-    print("install matplotlib for graphical output!")
+

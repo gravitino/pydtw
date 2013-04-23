@@ -16,7 +16,7 @@ dtw_wrap.o: dtw_wrap.cxx
 
 _libdtw.so: dtw.o dtw_wrap.o
 	$(CC) $(CFLAGS) $(OBJ) -shared -o _libdtw.so
-	rm -f dtw_wrap,cxx
+	rm -f dtw_wrap.cxx
 	rm -f $(OBJ)
 clean:
 	rm -f libdtw.py
