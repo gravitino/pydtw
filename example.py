@@ -17,16 +17,15 @@ for mode, name in [(True, 'Euclidean'), (False, 'Manhatten')]:
            if mode == True else \
            dtw.dist_manhatten(query, subject)
     
-    pl.imshow([[abs(query[i]-subject[j]) for j in range(len(subject))] 
-                                         for i in range(len(query))])
-    
-    for window in range(1, max(len(subject), len(query)), 32):
+    for window in range(0, max(len(subject), len(query)), 32):
         gamma = dtw.WarpingPath()
         print dtw.dist_cdtw_backtrace(query, subject, window, gamma, mode)
         pl.plot(*zip(*[node[::-1] for node in gamma]))
 
     print dtw.dist_dtw(query, subject, mode)
 
+    pl.imshow([[abs(query[i]-subject[j]) for j in range(len(subject))] 
+                                         for i in range(len(query))], aspect="auto")
     pl.title(name)
     pl.show()
 

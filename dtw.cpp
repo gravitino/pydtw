@@ -117,15 +117,18 @@ ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w, std::vecto
         while (i != 0 && j !=0) {
         
             // add node to warping path
-            path->push_back(std::pair<itype, itype>(i, j));
+            path->push_back(std::pair<itype, itype>(i-1, j-1));
             
             // manipulate indices of needle
-            if (pre[i*(Hsize+1)+j] < 2) 
+            if (pre[i*(Hsize+1)+j] == 0) {
                 i -= 1;
-            
-            // manipulate indices of haystack
-            if (pre[i*(Hsize+1)+j] > 0)
-                j -= 1;
+            }
+            if (pre[i*(Hsize+1)+j] == 1) {
+                i -= 1; j -=1;
+            }
+            if (pre[i*(Hsize+1)+j] == 2) {
+                j -=1;
+            }
         }
 
         // reverse the warping path
@@ -183,8 +186,3 @@ float dist_cdtw_backtrace(std::vector<float> *N, std::vector<float> *H, unsigned
      else
         return meta_dtw<unsigned int, float, true, false, true>(N, H, w, path);
 }
-
-
-
-
-
