@@ -1,4 +1,4 @@
 pydtw
 =====
 
-lightweight unconstrained Dynamic Time Warping bindings for Python
+lightweight unconstrained and constrained Dynamic Time Warping bindings for Python
