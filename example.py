@@ -13,8 +13,8 @@ print "Euclidean L_2-norm:", dtw.euclidean(query, subject)
 
 print "\nMANHATTEN\n"
 
-print "Manhatten DTW:", dtw.dtw(query, subject, False)
-print "Manhatten constrained DTW:", dtw.cdtw(query, subject, 32, False)
+print "Manhatten DTW:", dtw.dtw(query, subject)
+print "Manhatten constrained DTW:", dtw.cdtw(query, subject, 32)
 print "Manhatten L_1-norm:", dtw.manhatten(query, subject)
 
 try:
