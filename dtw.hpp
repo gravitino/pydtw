@@ -1,4 +1,5 @@
 #include <cmath>
+#include <list>
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -10,3 +11,4 @@ float dist_dtw_backtrace(std::vector<float> *N, std::vector<float> *H, std::vect
 float dist_cdtw(std::vector<float> *N, std::vector<float> *H, unsigned int w ,bool squared);
 float dist_cdtw_backtrace(std::vector<float> *N, std::vector<float> *H, unsigned int w, std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared);
 
+int envelope (std::vector<float> *series, unsigned int w, std::vector<float> *L, std::vector<float> *U);

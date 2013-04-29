@@ -6,7 +6,11 @@
 #define argmin3(x, y, z) ((x < y && x < z) ? 0 : (y < z ? 1 : 2))
 #define sgn(x) ((x) < 0 ? -1 : 1)
 #define abs(x) ((x)*sgn(x))
-#define unused(x) ((void)x)
+#define unused(x) ((void) x)
+
+///////////////////////////////////////////////////////////////////////////////
+// distance measures
+///////////////////////////////////////////////////////////////////////////////
 
 template <class itype, class ftype, bool squared> 
 ftype meta_lp12(std::vector<ftype>* N, std::vector<ftype>* H) {
@@ -28,7 +32,8 @@ ftype meta_lp12(std::vector<ftype>* N, std::vector<ftype>* H) {
 }
 
 template <class itype, class ftype, bool constrained, bool squared, bool backtrace> 
-ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w, std::vector<std::pair<itype, itype> >* path) {
+ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w, 
+               std::vector<std::pair<itype, itype> >* path) {
 
     // vector sizes for convenience
     const itype Nsize = N->size(), Hsize = H->size();
@@ -141,7 +146,9 @@ ftype meta_dtw(std::vector<ftype>* N, std::vector<ftype>* H, itype w, std::vecto
     return dist;
 }
 
-// wrapper functions
+///////////////////////////////////////////////////////////////////////////////
+// wrappers for distance measures
+///////////////////////////////////////////////////////////////////////////////
 
 float dist_euclidean(std::vector<float> *N, std::vector<float> *H) {
      
@@ -162,7 +169,7 @@ float dist_dtw(std::vector<float> *N, std::vector<float> *H, bool squared) {
 }
 
 float dist_dtw_backtrace(std::vector<float> *N, std::vector<float> *H, 
-                    std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
+      std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
      
      if (squared)
         return meta_dtw<unsigned int, float, false, true, true>(N, H, 0, path);
@@ -179,10 +186,90 @@ float dist_cdtw(std::vector<float> *N, std::vector<float> *H, unsigned int w ,bo
 }
 
 float dist_cdtw_backtrace(std::vector<float> *N, std::vector<float> *H, unsigned int w, 
-                          std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
+      std::vector<std::pair<unsigned int, unsigned int> >* path, bool squared) {
      
      if (squared)
         return meta_dtw<unsigned int, float, true, true, true>(N, H, w, path);
      else
         return meta_dtw<unsigned int, float, true, false, true>(N, H, w, path);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// lower bound - related methods
+///////////////////////////////////////////////////////////////////////////////
+
+template <class itype, class ftype> 
+int meta_envelope(std::vector<ftype> *series, itype w, 
+                  std::vector<ftype> *L, std::vector<ftype> *U) {
+    
+    // remember n for convenience
+    itype n = series->size();
+    
+    // envelope preinitialized with zeros
+    L->clear();
+    U->clear();
+    L->resize(n, 0);
+    U->resize(n, 0);
+    
+    // Daniel Lemire's windowed min-max algorithm in O(3n):
+    std::list<itype> u = std::list<itype>();
+    std::list<itype> l = std::list<itype>();
+
+    u.push_back(0);
+    l.push_back(0);
+
+    for (itype i = 1; i < n; ++i) {
+
+        if (i > w) {
+
+            U->at(i-w-1) = series->at(u.front());
+            L->at(i-w-1) = series->at(l.front());
+        }
+        
+        if (series->at(i) > series->at(i-1)) {
+            
+            u.pop_back();
+            while (!u.empty() && series->at(i) > series->at(u.back()))
+                u.pop_back();
+        } else {
+
+            l.pop_back();
+            while (!l.empty() && series->at(i) < series->at(l.back()))
+                l.pop_back();
+        }
+        
+        u.push_back(i);
+        l.push_back(i);
+        
+        if (i == 2*w+1+u.front())
+            u.pop_front();
+        else if (i == 2*w+1+l.front())
+            l.pop_front();
+    }
+
+    for (itype i = n; i < n+w+1; ++i) {
+
+        U->at(i-w-1) = series->at(u.front());
+        L->at(i-w-1) = series->at(l.front());
+
+        if (i-u.front() >= 2*w+1)
+            u.pop_front();
+
+        if (i-l.front() >= 2*w+1)
+            l.pop_front();
+    }
+
+    return 0;
+}
+
+int envelope (std::vector<float> *series, unsigned int w, 
+              std::vector<float> *L, std::vector<float> *U) {
+
+    return meta_envelope<unsigned int, float> (series, w, L, U);
+}
+
+
+
+
+
+
