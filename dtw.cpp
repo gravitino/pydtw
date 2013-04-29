@@ -270,6 +270,11 @@ ftype meta_lb_keogh(std::vector<ftype> *query, std::vector<ftype> *subject,
             meta_envelope<itype, ftype> (query, w, L, U);
         else
             meta_envelope<itype, ftype> (subject, w, L, U);
+    } else {
+        if (onquery)
+            query = new std::vector<ftype>(subject->size(), 0);
+        else
+            subject = new std::vector<ftype>(query->size(), 0);
     }
     
     // calculate sum of differences to the given envelope
@@ -294,6 +299,11 @@ ftype meta_lb_keogh(std::vector<ftype> *query, std::vector<ftype> *subject,
     if (!precalculated) {
         delete L;
         delete U;
+    } else {
+        if (onquery)
+            delete query;
+        else
+            delete subject;
     }
     
     return penalty;
@@ -310,7 +320,7 @@ int lb_envelope (std::vector<float> *series, unsigned int w,
     return meta_envelope<unsigned int, float> (series, w, L, U);
 }
 
-float lb_keogh_OnQuery(std::vector<float> *query, std::vector<float> *subject,
+float lb_keogh_onQuery(std::vector<float> *query, std::vector<float> *subject,
                        unsigned int w, bool squared) {
     
     if (squared)
@@ -321,7 +331,7 @@ float lb_keogh_OnQuery(std::vector<float> *query, std::vector<float> *subject,
               (query, subject, w,0 , 0);
 }
 
-float lb_keogh_OnSubject(std::vector<float> *query, std::vector<float> *subject,
+float lb_keogh_onSubject(std::vector<float> *query, std::vector<float> *subject,
                          unsigned int w, bool squared) {
     
     if (squared)
@@ -330,6 +340,16 @@ float lb_keogh_OnSubject(std::vector<float> *query, std::vector<float> *subject,
     else
         return meta_lb_keogh<unsigned int, float, false, false, false> 
               (query, subject, w, 0, 0);
+}
+
+float lb_keogh_onEnvelope(std::vector<float> *series, std::vector<float> *L,
+                          std::vector<float> *U, unsigned int w, bool squared) {
+    if(squared)
+        return meta_lb_keogh<unsigned int, float, true, true, true>
+            (0, series, w, L, U);
+    else
+        return meta_lb_keogh<unsigned int, float, true, true, false>
+            (0, series, w, L, U);
 }
 
 

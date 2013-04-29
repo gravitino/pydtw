@@ -25,6 +25,16 @@ S = dtw.TimeSeries(np.sin(T))
 mode = True
 
 # calculate lower bounds and associated constrained DTW measure
-print "lb_Keogh on query", dtw.lb_keogh_OnQuery(Q, S, w, mode), \
-      "lb_Keogh on subject", dtw.lb_keogh_OnSubject(Q, S, w, mode), \
-      "constrained DTW", dtw.dist_cdtw(Q, S, w, mode)
+print "lb_Keogh on query", \
+      dtw.lb_keogh_onQuery(Q, S, w, mode), \
+      dtw.lb_keogh_onEnvelope(S, L, U, w, mode)
+
+# now on subject
+dtw.lb_envelope(S, w, L, U)
+print "lb_Keogh on subject", \
+      dtw.lb_keogh_onSubject(Q, S, w, mode), \
+      dtw.lb_keogh_onEnvelope(Q, L, U, w, mode)
+      
+# the constrained DTW measure
+print "constrained DTW", \
+      dtw.dist_cdtw(Q, S, w, mode)

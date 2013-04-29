@@ -25,5 +25,6 @@ float dist_cdtw_backtrace(std::vector<float> *N, std::vector<float> *H, unsigned
 // lower bounding techniques
 
 int lb_envelope (std::vector<float> *series, unsigned int w, std::vector<float> *L, std::vector<float> *U);
-float lb_keogh_OnQuery(std::vector<float> *query, std::vector<float> *subject, unsigned int w, bool squared);
-float lb_keogh_OnSubject(std::vector<float> *query, std::vector<float> *subject, unsigned int w, bool squared);
+float lb_keogh_onQuery(std::vector<float> *query, std::vector<float> *subject, unsigned int w, bool squared);
+float lb_keogh_onSubject(std::vector<float> *query, std::vector<float> *subject, unsigned int w, bool squared);
+float lb_keogh_onEnvelope(std::vector<float> *series, std::vector<float> *L, std::vector<float> *U, unsigned int w, bool squared);
