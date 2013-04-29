@@ -1,13 +1,5 @@
 #include "dtw.hpp"
 
-#define min(x, y) ((x) < (y) ? (x) : (y))
-#define max(x, y) ((x) < (y) ? (y) : (x))
-#define min3(x, y, z) (min(x, min(y, z)))
-#define argmin3(x, y, z) ((x < y && x < z) ? 0 : (y < z ? 1 : 2))
-#define sgn(x) ((x) < 0 ? -1 : 1)
-#define abs(x) ((x)*sgn(x))
-#define unused(x) ((void) x)
-
 ///////////////////////////////////////////////////////////////////////////////
 // distance measures
 ///////////////////////////////////////////////////////////////////////////////
@@ -262,14 +254,82 @@ int meta_envelope(std::vector<ftype> *series, itype w,
     return 0;
 }
 
-int envelope (std::vector<float> *series, unsigned int w, 
+template <class itype, class ftype, bool precalculated, bool onquery, bool squared> 
+ftype meta_lb_keogh(std::vector<ftype> *query, std::vector<ftype> *subject, 
+                    itype w, std::vector<ftype> *L, std::vector<ftype> *U) {
+
+    ftype penalty = 0;
+
+    // if envelope not calculated do it
+    if (!precalculated) {
+    
+        L = new std::vector<ftype>();
+        U = new std::vector<ftype>();
+    
+        if (onquery)
+            meta_envelope<itype, ftype> (query, w, L, U);
+        else
+            meta_envelope<itype, ftype> (subject, w, L, U);
+    }
+    
+    // calculate sum of differences to the given envelope
+    for (itype i = 0; i < min(query->size(), subject->size()); ++i) {
+        
+        ftype cost = 0;
+        
+        if (onquery)
+            cost = L->at(i) > subject->at(i) ? L->at(i)-subject->at(i) :
+                   (U->at(i) < subject->at(i) ? subject->at(i)-U->at(i) : 0);
+        else
+            cost = L->at(i) > query->at(i) ? L->at(i)-query->at(i) :
+                   (U->at(i) < query->at(i) ? query->at(i)-U->at(i) : 0);
+    
+        if (squared)
+            cost *= cost;
+        
+        penalty += cost;
+    }
+    
+    // free memory if needed
+    if (!precalculated) {
+        delete L;
+        delete U;
+    }
+    
+    return penalty;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// wrappers for lower bound - related methods
+///////////////////////////////////////////////////////////////////////////////
+
+
+int lb_envelope (std::vector<float> *series, unsigned int w, 
               std::vector<float> *L, std::vector<float> *U) {
 
     return meta_envelope<unsigned int, float> (series, w, L, U);
 }
 
+float lb_keogh_OnQuery(std::vector<float> *query, std::vector<float> *subject,
+                       unsigned int w, bool squared) {
+    
+    if (squared)
+        return meta_lb_keogh<unsigned int, float, false, true, true> 
+              (query, subject, w, 0, 0);
+    else
+        return meta_lb_keogh<unsigned int, float, false, true, false> 
+              (query, subject, w,0 , 0);
+}
 
-
-
+float lb_keogh_OnSubject(std::vector<float> *query, std::vector<float> *subject,
+                         unsigned int w, bool squared) {
+    
+    if (squared)
+        return meta_lb_keogh<unsigned int, float, false, false, true> 
+              (query, subject, w, 0, 0);
+    else
+        return meta_lb_keogh<unsigned int, float, false, false, false> 
+              (query, subject, w, 0, 0);
+}
 
 
