@@ -1,9 +1,11 @@
 pydtw
 =====
 
+CAUTION: The current interface is frozen and will not be developed further. A complete numpy-compliant rewrite of the code will be done in a development branch.
+
 lightweight unconstrained and constrained Dynamic Time Warping bindings for Python
 
 FEATURES
 
-o full and constrained DTW measure (example.py)
-o LB_Keogh lower bounding techniques (example2.py)
+ - full and constrained DTW measure (example.py)
+ - LB_Keogh lower bounding techniques (example2.py)
