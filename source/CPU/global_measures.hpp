@@ -1,9 +1,8 @@
 #ifndef CPU_GLOBAL_MEASURES_HPP
 #define CPU_GLOBAL_MEASURES_HPP
 
-#include <iostream>
-#include <type_traits>   // static type control
 #include <immintrin.h>   // avx instructions
+#include "helper.hpp"    // convenience stuff
 
 namespace lockstep {
 
@@ -39,46 +38,82 @@ namespace lockstep {
         return result;
     }
     
-    template <class index_t, class value_t>
-    value_t dist_euclidean_avx (value_t * query  , index_t M,
-                                value_t * subject, index_t N) {
-    
+    template <class index_t, class value_t> 
+    value_t dist_lp (value_t * query  , index_t M,
+                     value_t * subject, index_t N, index_t p) {
+        
         assert (M == N);
         
         value_t result = static_cast<value_t>(0);
         
-        if (std::is_same<float, value_t>()) {
-        
-            index_t border = (N/8)*8;
-            __m256 cache;
-        
-            for (index_t i = 0; i < border; i += 8) {            
-                __m256 r = _mm256_sub_ps(_mm256_loadu_ps(query+i),
-                                         _mm256_loadu_ps(subject+i));
-                cache = _mm256_add_ps(cache, _mm256_mul_ps(r, r));                
-            }
-            
-            // I should rethink the next five lines
-            const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(cache, 1), 
-                                           _mm256_castps256_ps128(cache));
-            const __m128 x64 = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
-            const __m128 x32 = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
-            result += _mm_cvtss_f32(x32);
-            
-            for (index_t i = border; i < N; ++i) {
-                const value_t res = query[i] - subject[i];
-                result += res*res;
-            }
-            
-        } else if (std::is_same<double, value_t>()) {
-            return -1;
-        } else {
-            return -1;
+        for (index_t i = 0; i < N; ++i) {
+            const value_t res = query[i] - subject[i];
+            result += helper::lp_pow(res, p);
         }
         
         return result;
     }
+    
+    template <class index_t>
+    double dist_euclidean_avx_d (double * query  , index_t M,
+                                 double * subject, index_t N) {
+    
+        assert (M == N);
+        
+        double result = 0.0;
+        const index_t border = (N/4)*4;
+        __m256d cache = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
+            
+        for (index_t i = 0; i < border; i += 4) {
+            __m256d a = _mm256_loadu_pd(query+i);
+            __m256d b = _mm256_loadu_pd(subject+i);
+            
+            __m256d r = _mm256_sub_pd(a, b);
+            cache = _mm256_add_pd(cache, _mm256_mul_pd(r, r));
+        }
+        
+        __m256d hsum = _mm256_add_pd(cache, 
+                       _mm256_permute2f128_pd(cache, cache, 0x1));
+        _mm_store_sd(&result, _mm_hadd_pd(_mm256_castpd256_pd128(hsum),
+                                          _mm256_castpd256_pd128(hsum)));
+            
+        for (index_t i = border; i < N; ++i) {
+            const double res = query[i] - subject[i];
+            result += res*res;
+        }
+        
+        return result;
+    }
+    
+    template <class index_t>
+    float dist_euclidean_avx_f (float * query  , index_t M,
+                                float * subject, index_t N) {
+                                  
+        assert (M == N);
+        
+        float result = 0.0;
+        const index_t border = (N/8)*8;
+        __m256 cache = _mm256_set_ps(0.0f, 0.0f, 0.0f, 0.0f,
+                                     0.0f, 0.0f, 0.0f, 0.0f);
+        
+        for (index_t i = 0; i < border; i += 8) {
+            __m256 r = _mm256_sub_ps(_mm256_loadu_ps(query+i),
+                                     _mm256_loadu_ps(subject+i));
+            cache = _mm256_add_ps(cache, _mm256_mul_ps(r, r));
+        }
 
+        __m256 hsum = _mm256_hadd_ps(cache, cache);
+        hsum = _mm256_add_ps(hsum, _mm256_permute2f128_ps(hsum, hsum, 0x1));
+        _mm_store_ss(&result, _mm_hadd_ps(_mm256_castps256_ps128(hsum), 
+                                          _mm256_castps256_ps128(hsum)));
+            
+        for (index_t i = border; i < N; ++i) {
+           const float res = query[i] - subject[i];
+           result += res*res;
+        }
+        
+        return result;
+    }
 }
 
 #endif
