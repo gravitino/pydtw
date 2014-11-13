@@ -114,6 +114,29 @@ namespace lockstep {
         
         return result;
     }
+    
+    template <class index_t, class value_t>
+    value_t dist_keogh_cid (value_t * query  , index_t M,
+                            value_t * subject, index_t N) {
+        
+        assert (M == N);
+        
+        value_t CEQ = static_cast<value_t>(0),
+                CES = static_cast<value_t>(0);
+        
+        for (index_t i = 0; i < M-1; ++i) {
+            value_t res = query[i+1] - query[i];
+            CEQ += res*res;
+            
+            res = subject[i+1] - subject[i];
+            CES += res*res;
+        }
+        
+        const value_t x = CEQ > CES ? CEQ : CES;
+        const value_t y = CEQ < CES ? CEQ : CES;
+
+        return dist_euclidean(query, M, subject, N) * ((x == y) ? 1 : x / y);
+    }
 }
 
 #endif
