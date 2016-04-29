@@ -15,21 +15,10 @@
 //    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-%module pydtw
-%{
-/* Includes the header in the wrapper code */
-#define SWIG_FILE_WITH_INIT
-#include "pydtw.hpp"
-%}
+#ifndef PYDTW_QUALIFIERS_HPP
+#define PYDTW_QUALIFIERS_HPP
 
-%include "typemaps.i"
-%include "numpy.i"
+#define INLINE_QUALIFIERS inline
+#define ARCHITECTURE_QUALIFIERS
 
-%init %{
-import_array();
-%}
-
-%include "pydtw.hpp"
-
-//%apply (double* INPLACE_ARRAY1, int DIM1) {(double* x, int N)};
-//%template(reverseD)  reverse<int, double>;
+#endif

@@ -14,3 +14,37 @@
 //    You should have received a copy of the GNU General Public License
 //    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
+
+#include "pydtw.hpp"
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main () {
+
+    std::vector<float> series0(40, 0);
+    std::vector<float> series1(40, 0);
+    std::iota(series1.begin(), series1.end(), 1);
+
+    auto metric_em = metric_euclidean_multivariate();
+    std::cout << lockstep_multivariate(series0.data(), 10,
+                                       series1.data(), 10,
+                                       metric_em, 4) << std::endl;
+
+    auto metric_mm = metric_manhattan_multivariate();
+    std::cout << lockstep_multivariate(series0.data(), 10,
+                                       series1.data(), 10,
+                                       metric_mm, 4) << std::endl;
+
+    auto metric_ef = metric_euclidean_fixed();
+    std::cout << lockstep_fixed<int, 4>(series0.data(), 10,
+                                        series1.data(), 10,
+                                        metric_ef) << std::endl;
+
+    auto metric_mf = metric_manhattan_fixed();
+    std::cout << lockstep_fixed<int, 4>(series0.data(), 10,
+                                        series1.data(), 10,
+                                        metric_mf) << std::endl;
+
+}
