@@ -28,38 +28,15 @@
 // local measures
 ///////////////////////////////////////////////////////////////////////////////
 
+template <
+    typename strde_t>
 struct metric_euclidean_multivariate {
-    template <
-        typename strde_t,
-        typename value_t>
 
-    INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-
-    value_t operator()(
-        const value_t * const __restrict__ entry0,
-        const value_t * const __restrict__ entry1,
-        const strde_t stride=1) const {
-
-        value_t result = 0;
-
-        for (strde_t i = 0; i < stride; i++) {
-            const value_t residue = entry0[i]-entry1[i];
-            result += residue*residue;
-        }
-
-        return result;
-    }
-};
-
-struct metric_euclidean_fixed {
+    const strde_t stride;
+    metric_euclidean_multivariate(strde_t strde) : stride(strde) {}
 
     template <
-        typename strde_t,
-        strde_t stride=1,
-        typename value_t>
-
-    INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-
+        typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
     value_t operator()(
         const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1) const {
@@ -75,18 +52,42 @@ struct metric_euclidean_fixed {
     }
 };
 
-struct metric_manhattan_multivariate {
+template <
+    typename strde_t,
+    strde_t  strde=1>
+struct metric_euclidean_fixed {
+
+    static constexpr strde_t stride = strde;
 
     template <
-        typename strde_t,
-        typename value_t>
-
-    INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-
+        typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
     value_t operator()(
         const value_t * const __restrict__ entry0,
-        const value_t * const __restrict__ entry1,
-        const strde_t stride=1) const {
+        const value_t * const __restrict__ entry1) const {
+
+        value_t result = 0;
+
+        for (strde_t i = 0; i < stride; i++) {
+            const value_t residue = entry0[i]-entry1[i];
+            result += residue*residue;
+        }
+
+        return result;
+    }
+};
+
+template <
+    typename strde_t>
+struct metric_manhattan_multivariate {
+
+    const strde_t stride;
+    metric_manhattan_multivariate(strde_t strde) : stride(strde) {}
+
+    template <
+        typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+    value_t operator()(
+        const value_t * const __restrict__ entry0,
+        const value_t * const __restrict__ entry1) const {
 
         value_t result = 0;
 
@@ -99,15 +100,15 @@ struct metric_manhattan_multivariate {
     }
 };
 
+template <
+    typename strde_t,
+    strde_t  strde=1>
 struct metric_manhattan_fixed {
 
+    static constexpr strde_t stride = strde;
+
     template <
-        typename strde_t,
-        strde_t stride=1,
-        typename value_t>
-
-    INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-
+        typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
     value_t operator()(
         const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1) const {

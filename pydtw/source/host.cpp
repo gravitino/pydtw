@@ -40,9 +40,9 @@ double lockstepEuclidean1d(
     // sanity checks
     assert(length0 == length1);
 
-    return lockstep_fixed<int, 1>(series0, length0,
-                                  series1, length1,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0,
+                          series1, length1,
+                          metric_euclidean_fixed<int, 1>());
 }
 
 double lockstepEuclidean2d(
@@ -55,9 +55,9 @@ double lockstepEuclidean2d(
     assert(length0 == length1);
     assert(length0 % 2 == 0);
 
-    return lockstep_fixed<int, 2>(series0, length0/2,
-                                  series1, length1/2,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/2,
+                          series1, length1/2,
+                          metric_euclidean_fixed<int, 2>()) ;
 }
 
 double lockstepEuclidean3d(
@@ -70,9 +70,9 @@ double lockstepEuclidean3d(
     assert(length0 == length1);
     assert(length0 % 3 == 0);
 
-    return lockstep_fixed<int, 3>(series0, length0/3,
-                                  series1, length1/3,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/3,
+                         series1, length1/3,
+                         metric_euclidean_fixed<int, 3>()) ;
 }
 
 double lockstepEuclidean4d(
@@ -85,9 +85,9 @@ double lockstepEuclidean4d(
     assert(length0 == length1);
     assert(length0 % 4 == 0);
 
-    return lockstep_fixed<int, 4>(series0, length0/4,
-                                  series1, length1/4,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/4,
+                          series1, length1/4,
+                          metric_euclidean_fixed<int, 4>()) ;
 }
 
 double lockstepEuclideanNd(
@@ -104,7 +104,7 @@ double lockstepEuclideanNd(
 
     return lockstep_multivariate(series0, length0/stride,
                                  series1, length1/stride,
-                                 metric_euclidean_multivariate(), stride);
+                                 metric_euclidean_multivariate<int>(stride));
 }
 
 float lockstepEuclidean1f(
@@ -116,9 +116,9 @@ float lockstepEuclidean1f(
     // sanity checks
     assert(length0 == length1);
 
-    return lockstep_fixed<int, 1>(series0, length0,
-                                  series1, length1,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0,
+                          series1, length1,
+                          metric_euclidean_fixed<int, 1>()) ;
 }
 
 float lockstepEuclidean2f(
@@ -131,9 +131,9 @@ float lockstepEuclidean2f(
     assert(length0 == length1);
     assert(length0 % 2 == 0);
 
-    return lockstep_fixed<int, 2>(series0, length0/2,
-                                  series1, length1/2,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/2,
+                          series1, length1/2,
+                          metric_euclidean_fixed<int, 2>()) ;
 }
 
 float lockstepEuclidean3f(
@@ -146,9 +146,9 @@ float lockstepEuclidean3f(
     assert(length0 == length1);
     assert(length0 % 3 == 0);
 
-    return lockstep_fixed<int, 3>(series0, length0/3,
-                                  series1, length1/3,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/3,
+                          series1, length1/3,
+                          metric_euclidean_fixed<int, 3>()) ;
 }
 
 float lockstepEuclidean4f(
@@ -161,9 +161,9 @@ float lockstepEuclidean4f(
     assert(length0 == length1);
     assert(length0 % 4 == 0);
 
-    return lockstep_fixed<int, 4>(series0, length0/4,
-                                  series1, length1/4,
-                                  metric_euclidean_fixed()) ;
+    return lockstep_fixed(series0, length0/4,
+                          series1, length1/4,
+                          metric_euclidean_fixed<int, 4>()) ;
 }
 
 float lockstepEuclideanNf(
@@ -180,7 +180,7 @@ float lockstepEuclideanNf(
 
     return lockstep_multivariate(series0, length0/stride,
                                  series1, length1/stride,
-                                 metric_euclidean_multivariate(), stride);
+                                 metric_euclidean_multivariate<int>(stride));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -196,9 +196,9 @@ double lockstepManhattan1d(
     // sanity checks
     assert(length0 == length1);
 
-    return lockstep_fixed<int, 1>(series0, length0,
-                                  series1, length1,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0,
+                          series1, length1,
+                          metric_manhattan_fixed<int, 1>()) ;
 }
 
 double lockstepManhattan2d(
@@ -211,9 +211,9 @@ double lockstepManhattan2d(
     assert(length0 == length1);
     assert(length0 % 2 == 0);
 
-    return lockstep_fixed<int, 2>(series0, length0/2,
-                                  series1, length1/2,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/2,
+                          series1, length1/2,
+                          metric_manhattan_fixed<int, 2>()) ;
 }
 
 double lockstepManhattan3d(
@@ -226,9 +226,9 @@ double lockstepManhattan3d(
     assert(length0 == length1);
     assert(length0 % 3 == 0);
 
-    return lockstep_fixed<int, 3>(series0, length0/3,
-                                  series1, length1/3,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/3,
+                          series1, length1/3,
+                          metric_manhattan_fixed<int, 3>()) ;
 }
 
 double lockstepManhattan4d(
@@ -241,9 +241,9 @@ double lockstepManhattan4d(
     assert(length0 == length1);
     assert(length0 % 4 == 0);
 
-    return lockstep_fixed<int, 4>(series0, length0/4,
-                                  series1, length1/4,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/4,
+                          series1, length1/4,
+                          metric_manhattan_fixed<int, 4>()) ;
 }
 
 double lockstepManhattanNd(
@@ -260,9 +260,8 @@ double lockstepManhattanNd(
 
     return lockstep_multivariate(series0, length0/stride,
                                  series1, length1/stride,
-                                 metric_manhattan_multivariate(), stride);
+                                 metric_manhattan_multivariate<int>(stride));
 }
-
 
 float lockstepManhattan1f(
     float * series0,
@@ -273,9 +272,9 @@ float lockstepManhattan1f(
     // sanity checks
     assert(length0 == length1);
 
-    return lockstep_fixed<int, 1>(series0, length0,
-                                  series1, length1,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0,
+                          series1, length1,
+                          metric_manhattan_fixed<int, 1>()) ;
 }
 
 float lockstepManhattan2f(
@@ -288,9 +287,9 @@ float lockstepManhattan2f(
     assert(length0 == length1);
     assert(length0 % 2 == 0);
 
-    return lockstep_fixed<int, 2>(series0, length0/2,
-                                  series1, length1/2,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/2,
+                          series1, length1/2,
+                          metric_manhattan_fixed<int, 2>()) ;
 }
 
 float lockstepManhattan3f(
@@ -303,9 +302,9 @@ float lockstepManhattan3f(
     assert(length0 == length1);
     assert(length0 % 3 == 0);
 
-    return lockstep_fixed<int, 3>(series0, length0/3,
-                                  series1, length1/3,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/3,
+                          series1, length1/3,
+                          metric_manhattan_fixed<int, 3>()) ;
 }
 
 float lockstepManhattan4f(
@@ -318,9 +317,9 @@ float lockstepManhattan4f(
     assert(length0 == length1);
     assert(length0 % 4 == 0);
 
-    return lockstep_fixed<int, 4>(series0, length0/4,
-                                  series1, length1/4,
-                                  metric_manhattan_fixed()) ;
+    return lockstep_fixed(series0, length0/4,
+                          series1, length1/4,
+                          metric_manhattan_fixed<int, 4>()) ;
 }
 
 float lockstepManhattanNf(
@@ -337,5 +336,5 @@ float lockstepManhattanNf(
 
     return lockstep_multivariate(series0, length0/stride,
                                  series1, length1/stride,
-                                 metric_manhattan_multivariate(), stride);
+                                 metric_manhattan_multivariate<int>(stride));
 }
