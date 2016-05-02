@@ -18,7 +18,23 @@
 #ifndef PYDTW_LOCKSTEP_HPP
 #define PYDTW_LOCKSTEP_HPP
 
-// TODO: maybe unroll (christian@metalabs.de)
+///////////////////////////////////////////////////////////////////////////////
+// includes
+///////////////////////////////////////////////////////////////////////////////
+
+#include <assert.h>
+
+///////////////////////////////////////////////////////////////////////////////
+// optional OpenMP support
+///////////////////////////////////////////////////////////////////////////////
+
+#if defined(PYDTW_ENABLE_OPENMP)
+#include <omp.h>
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+// lockstep measures
+///////////////////////////////////////////////////////////////////////////////
 
 template <
     typename strde_t,
@@ -33,15 +49,18 @@ value_t lockstep_multivariate(
     funct_t   metric,
     strde_t   stride) {
 
+    assert(length0 == length1);
+
     value_t result = 0;
 
+    #if defined(PYDTW_ENABLE_OPENMP)
+    #pragma omp parallel for reduction(+: result) schedule(static, 1UL<<20)
+    #endif
     for (index_t i = 0; i < length0*stride; i += stride)
         result += metric(series0+i, series1+i, stride);
 
     return result;
 }
-
-// TODO: maybe unroll (christian@metalabs.de)
 
 template <
     typename strde_t,
@@ -56,10 +75,16 @@ value_t lockstep_fixed(
     index_t   length1,
     funct_t   metric) {
 
+    assert(length0 == length1);
+
     value_t result = 0;
 
+    #if defined(PYDTW_ENABLE_OPENMP)
+    #pragma omp parallel for reduction(+: result) schedule(static, 1UL<<20)
+    #endif
     for (index_t i = 0; i < length0*stride; i += stride)
-        result += metric.template operator()<strde_t, stride>(series0+i, series1+i);
+        result += metric.template operator()<strde_t, stride>(series0+i,
+                                                              series1+i);
 
     return result;
 }
