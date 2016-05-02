@@ -25,7 +25,7 @@ import numpy as np
 import pydtw as pd
 
 # length of the compared arrays
-length = (2*3*4)*(1 << 22)
+length = (2*3*4*5)*(1 << 20)
 
 # try different fixed-dimension distance/similarity measures
 for dtype, measure, name in [(np.float64, pd.host.lockstepEuclidean1d, "E1d"),
@@ -48,10 +48,6 @@ for dtype, measure, name in [(np.float64, pd.host.lockstepEuclidean1d, "E1d"),
     X = np.zeros(length, dtype=dtype)
     Y = np.ones (length, dtype=dtype)*2
 
-    # let's see how it scales
-    for _ in range(10):
-        measure(X, Y)
-
     print name, measure(X, Y)
 
 # try different variable dimension distance/similarity measures
@@ -65,9 +61,5 @@ for dtype, measure, name in [(np.float64, pd.host.lockstepEuclideanNd, "ENd"),
 
     # test variable dimension
     for dimension in [1, 2, 3, 4]:
-
-        # let's see how it scales
-        for _ in range(10):
-            measure(X, Y, dimension)
 
         print name, dimension, measure(X, Y, dimension)

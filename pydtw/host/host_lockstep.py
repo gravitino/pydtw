@@ -17,6 +17,7 @@
 
 import numpy as np
 import pydtw as pd
+import ctypes
 
 def lockstepEuclidean(series0, series1):
     """This method computes the Euclidean distance for two time series of same
@@ -29,11 +30,12 @@ def lockstepEuclidean(series0, series1):
 
     # remember the shape and flatten
     shape = series0.shape
-    series0 = series0.flatten() if len(shape) > 1 else series0
-    series1 = series1.flatten() if len(shape) > 1 else series1
+    dtype = series0.dtype
+    series0 = series0.reshape((np.prod(shape),))
+    series1 = series1.reshape((np.prod(shape),))
 
     # arbitrary shape double-precision calls
-    if series0.dtype == np.float64:
+    if dtype == np.float64:
         if len(shape) ==1 or shape[1] == 1:
             return pd.host.lockstepEuclidean1d(series0, series1)
         if shape[1] == 2:
@@ -45,7 +47,7 @@ def lockstepEuclidean(series0, series1):
         return pd.host.lockstepEuclideanNd(series0, series1, shape[1])
 
     # arbitrary shape single-precision calls
-    if series0.dtype == np.float32:
+    if dtype == np.float32:
         if len(shape) ==1 or shape[1] == 1:
             return pd.host.lockstepEuclidean1f(series0, series1)
         if shape[1] == 2:
@@ -69,8 +71,8 @@ def lockstepManhattan(series0, series1):
 
     # remember the shape and flatten
     shape = series0.shape
-    series0 = series0.flatten() if len(shape) > 1 else series0
-    series1 = series1.flatten() if len(shape) > 1 else series1
+    series0 = series0.reshape((np.prod(shape),))
+    series1 = series1.reshape((np.prod(shape),))
 
     # arbitrary shape double-precision calls
     if series0.dtype == np.float64:
