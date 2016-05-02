@@ -40,7 +40,7 @@ template <
     typename index_t,
     typename value_t,
     typename funct_t>
-value_t elastic_dtw_multivariate(
+value_t elastic_dtw(
     value_t * series0,
     index_t   length0,
     value_t * series1,
@@ -50,25 +50,9 @@ value_t elastic_dtw_multivariate(
     const index_t lane = length1+1;
     const index_t area = lane*(length0+1);
     std::vector<value_t> penalty(area, 0);
-    
+
 
     return penalty[area-1];
-}
-
-template <
-    typename index_t,
-    typename value_t,
-    typename funct_t>
-value_t elstic_dtw_fixed(
-    value_t * series0,
-    index_t   length0,
-    value_t * series1,
-    index_t   length1,
-    funct_t   metric) {
-
-    value_t result = 0;
-
-    return result;
 }
 
 #endif

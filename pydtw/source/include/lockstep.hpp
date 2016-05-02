@@ -34,29 +34,7 @@ template <
     typename index_t,
     typename value_t,
     typename funct_t>
-value_t lockstep_multivariate(
-    value_t * series0,
-    index_t   length0,
-    value_t * series1,
-    index_t   length1,
-    funct_t   metric) {
-
-    value_t result = 0;
-
-    #if defined(PYDTW_ENABLE_OPENMP)
-    #pragma omp parallel for reduction(+: result) schedule(static, 1UL<<20)
-    #endif
-    for (index_t i = 0; i < length0*metric.stride; i += metric.stride)
-        result += metric(series0+i, series1+i);
-
-    return result;
-}
-
-template <
-    typename index_t,
-    typename value_t,
-    typename funct_t>
-value_t lockstep_fixed(
+value_t lockstep(
     value_t * series0,
     index_t   length0,
     value_t * series1,
