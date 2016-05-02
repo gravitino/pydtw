@@ -31,6 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
+#define PYDTW_CONSTANTS_INFINITY (9999999)
 
 ///////////////////////////////////////////////////////////////////////////////
 // elastic measures
@@ -47,10 +48,23 @@ value_t elastic_dtw(
     index_t   length1,
     funct_t   metric) {
 
-    const index_t lane = length1+1;
-    const index_t area = lane*(length0+1);
-    std::vector<value_t> penalty(area, 0);
+    // convenience
+    const index_t lane_i = length0+1;
+    const index_t lane_j = length1+1;
+    const index_t area = lane_i*lane_j;
+    std::vector<value_t> penalty(area);
 
+    // initialize penalty matrix
+    for (index_t j = 1; j < lane_j; j++)
+        penalty[0*lane_j+j] = PYDTW_CONSTANTS_INFINITY;
+    for (index_t i = 1; i < lane_i; i++)
+        penalty[i*lane_j+0] = PYDTW_CONSTANTS_INFINITY;
+    penalty[0] = 0;
+
+    for (index_t i = 0; i < lane_i; i++)
+        for (index_t j = 0; j < lane_j; j++) {
+            const value_t residue = metric(series0, series1);
+        }
 
     return penalty[area-1];
 }
