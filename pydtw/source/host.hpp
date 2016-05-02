@@ -32,11 +32,40 @@
 // exports
 ///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// lockstep measures: Euclidean
+///////////////////////////////////////////////////////////////////////////////
+
 double lockstepEuclidean1d(
     double * series0,
     int      length0,
     double * series1,
     int      length1);
+
+double lockstepEuclidean2d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepEuclidean3d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepEuclidean4d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepEuclideanNd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      stride);
 
 float lockstepEuclidean1f(
     float * series0,
@@ -44,16 +73,95 @@ float lockstepEuclidean1f(
     float * series1,
     int     length1);
 
+float lockstepEuclidean2f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepEuclidean3f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepEuclidean4f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepEuclideanNf(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1,
+    int     stride);
+
+///////////////////////////////////////////////////////////////////////////////
+// lockstep measures: Manhattan
+///////////////////////////////////////////////////////////////////////////////
+
 double lockstepManhattan1d(
     double * series0,
     int      length0,
     double * series1,
     int      length1);
 
+double lockstepManhattan2d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepManhattan3d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepManhattan4d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+double lockstepManhattanNd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      stride);
+
 float lockstepManhattan1f(
     float * series0,
     int     length0,
     float * series1,
     int     length1);
+
+float lockstepManhattan2f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepManhattan3f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepManhattan4f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+float lockstepManhattanNf(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1,
+    int     stride);
 
 #endif

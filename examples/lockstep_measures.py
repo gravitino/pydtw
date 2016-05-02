@@ -20,17 +20,54 @@ import os.path, sys
 parentdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)
 sys.path.append(parentdir)
 
+# pydtw integrates with numpy
 import numpy as np
 import pydtw as pd
 
-# try different distance/similarity measures
-for dtype, measure, name in [(np.float32, pd.host.lockstepEuclidean1f, "E1f"),
-                             (np.float32, pd.host.lockstepManhattan1f, "M1f"),
-                             (np.float64, pd.host.lockstepEuclidean1d, "E1D"),
-                             (np.float64, pd.host.lockstepManhattan1d, "M1D")]:
+# length of the compared arrays
+length = (2*3*4)*(1 << 22)
 
-    length = 1 << 27
+# try different fixed-dimension distance/similarity measures
+for dtype, measure, name in [(np.float64, pd.host.lockstepEuclidean1d, "E1d"),
+                             (np.float64, pd.host.lockstepEuclidean2d, "E2d"),
+                             (np.float64, pd.host.lockstepEuclidean3d, "E3d"),
+                             (np.float64, pd.host.lockstepEuclidean4d, "E4d"),
+                             (np.float32, pd.host.lockstepEuclidean1f, "E1f"),
+                             (np.float32, pd.host.lockstepEuclidean2f, "E2f"),
+                             (np.float32, pd.host.lockstepEuclidean3f, "E3f"),
+                             (np.float32, pd.host.lockstepEuclidean4f, "E4f"),
+                             (np.float64, pd.host.lockstepManhattan2d, "M1d"),
+                             (np.float64, pd.host.lockstepManhattan1d, "M2d"),
+                             (np.float64, pd.host.lockstepManhattan3d, "M3d"),
+                             (np.float64, pd.host.lockstepManhattan4d, "M4d"),
+                             (np.float32, pd.host.lockstepManhattan1f, "M1f"),
+                             (np.float32, pd.host.lockstepManhattan2f, "M2f"),
+                             (np.float32, pd.host.lockstepManhattan3f, "M3f"),
+                             (np.float32, pd.host.lockstepManhattan4f, "M4f")]:
+
     X = np.zeros(length, dtype=dtype)
-    Y = np.ones (length, dtype=dtype)
+    Y = np.ones (length, dtype=dtype)*2
+
+    # let's see how it scales
+    for _ in range(10):
+        measure(X, Y)
 
     print name, measure(X, Y)
+
+# try different variable dimension distance/similarity measures
+for dtype, measure, name in [(np.float64, pd.host.lockstepEuclideanNd, "ENd"),
+                             (np.float32, pd.host.lockstepEuclideanNf, "ENf"),
+                             (np.float64, pd.host.lockstepManhattanNd, "MNd"),
+                             (np.float32, pd.host.lockstepManhattanNf, "MNf")]:
+
+    X = np.zeros(length, dtype=dtype)
+    Y = np.ones (length, dtype=dtype)*2
+
+    # test variable dimension
+    for dimension in [1, 2, 3, 4]:
+
+        # let's see how it scales
+        for _ in range(10):
+            measure(X, Y, dimension)
+
+        print name, dimension, measure(X, Y, dimension)

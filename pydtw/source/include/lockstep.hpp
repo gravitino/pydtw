@@ -19,12 +19,6 @@
 #define PYDTW_LOCKSTEP_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
-// includes
-///////////////////////////////////////////////////////////////////////////////
-
-#include <assert.h>
-
-///////////////////////////////////////////////////////////////////////////////
 // optional OpenMP support
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -49,8 +43,6 @@ value_t lockstep_multivariate(
     funct_t   metric,
     strde_t   stride) {
 
-    assert(length0 == length1);
-
     value_t result = 0;
 
     #if defined(PYDTW_ENABLE_OPENMP)
@@ -74,8 +66,6 @@ value_t lockstep_fixed(
     value_t * series1,
     index_t   length1,
     funct_t   metric) {
-
-    assert(length0 == length1);
 
     value_t result = 0;
 
