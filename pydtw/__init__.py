@@ -15,4 +15,8 @@
 #    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ##############################################################################
 
-print "pydtw imported"
+import sys
+
+# host api
+sys.path.append("./pydtw/source")
+import host

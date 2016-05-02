@@ -22,7 +22,7 @@
 // includes
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <include/qualifiers.hpp>             // qualifiers
+#include "qualifiers.hpp"             // qualifiers
 
 ///////////////////////////////////////////////////////////////////////////////
 // local measures
@@ -31,17 +31,17 @@
 struct metric_euclidean_multivariate {
     template <
         typename strde_t,
-        typename value_t> 
+        typename value_t>
 
     INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 
     value_t operator()(
-        const value_t * const __restrict__ entry0, 
+        const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1,
         const strde_t stride=1) const {
 
         value_t result = 0;
-        
+
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
             result += residue*residue;
@@ -56,16 +56,16 @@ struct metric_euclidean_fixed {
     template <
         typename strde_t,
         strde_t stride=1,
-        typename value_t> 
+        typename value_t>
 
     INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 
     value_t operator()(
-        const value_t * const __restrict__ entry0, 
+        const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1) const {
 
         value_t result = 0;
-        
+
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
             result += residue*residue;
@@ -79,17 +79,17 @@ struct metric_manhattan_multivariate {
 
     template <
         typename strde_t,
-        typename value_t> 
+        typename value_t>
 
     INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 
     value_t operator()(
-        const value_t * const __restrict__ entry0, 
+        const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1,
         const strde_t stride=1) const {
 
         value_t result = 0;
-        
+
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
             result += residue < 0 ? -residue : residue;
@@ -104,16 +104,16 @@ struct metric_manhattan_fixed {
     template <
         typename strde_t,
         strde_t stride=1,
-        typename value_t> 
+        typename value_t>
 
     INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 
     value_t operator()(
-        const value_t * const __restrict__ entry0, 
+        const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1) const {
 
         value_t result = 0;
-        
+
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
             result += residue < 0 ? -residue : residue;

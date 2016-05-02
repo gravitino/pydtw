@@ -15,63 +15,45 @@
 //    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef PYDTW_PYDTW_HPP
-#define PYDTW_PYDTW_HPP
+#ifndef PYDTW_HOST_HPP
+#define PYDTW_HOST_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 // includes
 ///////////////////////////////////////////////////////////////////////////////
 
+// metrics
 #include "include/metrics.hpp"
 
-///////////////////////////////////////////////////////////////////////////////
 // lock-step-measures
+#include "include/lockstep.hpp"
+
+///////////////////////////////////////////////////////////////////////////////
+// exports
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO: maybe unroll (christian@metalabs.de)
+double lockstepEuclidean1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
 
-template <
-    typename strde_t,
-    typename index_t,
-    typename value_t,
-    typename funct_t>
-value_t lockstep_multivariate(
-    value_t * series0,
-    index_t   length0,
-    value_t * series1,
-    index_t   length1,
-    funct_t   metric,
-    strde_t   stride) {
+float lockstepEuclidean1f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
 
-    value_t result = 0;
+double lockstepManhattan1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
 
-    for (index_t i = 0; i < length0*stride; i += stride)
-        result += metric(series0+i, series1+i, stride);
-
-    return result;
-}
-
-// TODO: maybe unroll (christian@metalabs.de)
-
-template <
-    typename strde_t,
-    strde_t stride=1,
-    typename index_t,
-    typename value_t,
-    typename funct_t>
-value_t lockstep_fixed(
-    value_t * series0,
-    index_t   length0,
-    value_t * series1,
-    index_t   length1,
-    funct_t   metric) {
-
-    value_t result = 0;
-
-    for (index_t i = 0; i < length0*stride; i += stride)
-        result += metric.template operator()<strde_t, stride>(series0+i, series1+i);
-
-    return result;
-}
+float lockstepManhattan1f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
 
 #endif

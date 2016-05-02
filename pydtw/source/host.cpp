@@ -15,8 +15,57 @@
 //    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "pydtw.hpp"
+///////////////////////////////////////////////////////////////////////////////
+// host API
+//////////////////////////////////////////////////////////////////////////////
 
+#include "host.hpp"
+
+double lockstepEuclidean1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1) {
+
+    return lockstep_fixed<int, 1>(series0, length0,
+                                  series1, length1,
+                                  metric_euclidean_fixed()) ;
+}
+
+float lockstepEuclidean1f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1) {
+
+    return lockstep_fixed<int, 1>(series0, length0,
+                                  series1, length1,
+                                  metric_euclidean_fixed()) ;
+}
+
+double lockstepManhattan1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1) {
+
+    return lockstep_fixed<int, 1>(series0, length0,
+                                  series1, length1,
+                                  metric_manhattan_fixed()) ;
+}
+
+float lockstepManhattan1f(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1) {
+
+    return lockstep_fixed<int, 1>(series0, length0,
+                                  series1, length1,
+                                  metric_manhattan_fixed()) ;
+}
+
+/*
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -48,3 +97,4 @@ int main () {
                                         metric_mf) << std::endl;
 
 }
+*/

@@ -15,11 +15,11 @@
 //    along with pydtw.  If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-%module pydtw
+%module host
 %{
 /* Includes the header in the wrapper code */
 #define SWIG_FILE_WITH_INIT
-#include "pydtw.hpp"
+#include "host.hpp"
 %}
 
 %include "typemaps.i"
@@ -29,7 +29,9 @@
 import_array();
 %}
 
-%include "pydtw.hpp"
+%apply (double* INPLACE_ARRAY1, int DIM1) {(double* series0, int length0)};
+%apply (double* INPLACE_ARRAY1, int DIM1) {(double* series1, int length1)};
+%apply (float* INPLACE_ARRAY1, int DIM1) {(float* series0, int length0)};
+%apply (float* INPLACE_ARRAY1, int DIM1) {(float* series1, int length1)};
 
-//%apply (double* INPLACE_ARRAY1, int DIM1) {(double* x, int N)};
-//%template(reverseD)  reverse<int, double>;
+%include "host.hpp"
