@@ -3,7 +3,7 @@ CXXFLAGS= -O3 -march=native -std=c++11
 SWIG=swig
 
 PYTHONINCLUDE= -I /usr/include/python2.7
-BASEDIR=pydtw/source
+BASEDIR=./pydtw/source
 SOURCE=$(BASEDIR)/host.cpp \
        $(BASEDIR)/host.hpp \
        $(BASEDIR)/host.i
