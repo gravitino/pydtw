@@ -30,6 +30,7 @@
 // includes
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <cmath> // std::min
 #include <vector>
 #define PYDTW_CONSTANTS_INFINITY (9999999)
 
@@ -61,9 +62,13 @@ value_t elastic_dtw(
         penalty[i*lane_j+0] = PYDTW_CONSTANTS_INFINITY;
     penalty[0] = 0;
 
-    for (index_t i = 0; i < lane_i; i++)
-        for (index_t j = 0; j < lane_j; j++) {
-            const value_t residue = metric(series0, series1);
+    for (index_t i = 1; i < lane_i; i++)
+        for (index_t j = 1; j < lane_j; j++) {
+            const value_t residue = metric(series0 + (i-1)*metric.stride, series1 + (j-1)*metric.stride);
+            penalty[i*lane_j + j] = residue +
+                           std::min(penalty[(i-0)*lane_j + j-1],
+                           std::min(penalty[(i-1)*lane_j + j-1],
+                                    penalty[(i-1)*lane_j + j-0]));
         }
 
     return penalty[area-1];
