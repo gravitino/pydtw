@@ -17,7 +17,6 @@
 
 import numpy as np
 import pydtw as pd
-import ctypes
 
 def lockstepEuclidean(series0, series1):
     """This method computes the Euclidean distance for two time series of same
