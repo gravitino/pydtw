@@ -20,6 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
+#include <vector>
+#include <tuple>
 
 ///////////////////////////////////////////////////////////////////////////////
 // host API
@@ -67,12 +69,8 @@ double lockstepEuclidean3d(
     int      length1) {
 
     // sanity checks
-    assert(length0 == length1);
-    assert(length0 % 3 == 0);
 
-    return lockstep(series0, length0/3,
-                    series1, length1/3,
-                    metric_euclidean_fixed<int, 3>()) ;
+
 }
 
 double lockstepEuclidean4d(
@@ -352,4 +350,17 @@ double elasticEuclideanDTW1d(
     return elastic_dtw(series0, length0,
                        series1, length1,
                        metric_euclidean_fixed<int, 1>());
+}
+
+double elasticEuclideanDTW1dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    std::vector<std::pair<int, int> > & wpath) {
+
+    typedef metric_euclidean_fixed<int, 1> dist;
+    return elastic_dtw_uc<int, double, dist, 0, 1>(series0, length0,
+                                                   series1, length1,
+                                                   dist(), 0, wpath);
 }

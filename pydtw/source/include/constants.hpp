@@ -23,8 +23,9 @@
 #define PYDTW_CONSTANTS_INFINITY (INFINITY)
 
 // positions during relaxation
-#define PYDTW_CONSTANTS_DIAGONAL (0)
-#define PYDTW_CONSTANTS_ABOVE    (1)
-#define PYDTW_CONSTANTS_LEFT     (2)
+#define PYDTW_CONSTANTS_NO_SOURCE       (0)
+#define PYDTW_CONSTANTS_DIAGONAL        (1)
+#define PYDTW_CONSTANTS_ABOVE           (2)
+#define PYDTW_CONSTANTS_LEFT            (3)
 
 #endif

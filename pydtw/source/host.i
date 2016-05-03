@@ -24,10 +24,17 @@
 
 %include "typemaps.i"
 %include "numpy.i"
+%include "std_vector.i"
+%include "std_pair.i"
 
 %init %{
 import_array();
 %}
+
+namespace std {
+    %template(WarpingNode) pair<int, int>;
+    %template(WarpingPath) vector<pair<int, int> >;
+}
 
 %apply (double* INPLACE_ARRAY1, int DIM1) {(double* series0, int length0)};
 %apply (double* INPLACE_ARRAY1, int DIM1) {(double* series1, int length1)};

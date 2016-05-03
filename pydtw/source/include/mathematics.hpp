@@ -30,5 +30,17 @@ value_t pydtw_abs(const value_t& x) {
     return x < 0 ? -x : x;
 }
 
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_min(const value_t& x, const value_t& y) {
+    return x < y ? x : y;
+}
+
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_max(const value_t& x, const value_t& y) {
+    return x > y ? x : y;
+}
+
 
 #endif

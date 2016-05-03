@@ -173,4 +173,11 @@ double elasticEuclideanDTW1d(
     double * series1,
     int      length1);
 
+double elasticEuclideanDTW1dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    std::vector<std::pair<int, int> > & wpath);
+
 #endif
