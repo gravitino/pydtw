@@ -22,6 +22,7 @@
 // includes
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <cmath>                      // std::min, std::acos
 #include "qualifiers.hpp"             // qualifiers
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,6 +122,30 @@ struct metric_manhattan_fixed {
         }
 
         return result;
+    }
+};
+
+template <
+    typename strde_t,
+    strde_t  strde=4>
+struct metric_quaternion_fixed {
+
+    static constexpr strde_t stride = strde;
+
+    template <
+        typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+    value_t operator()(
+        const value_t * const __restrict__ entry0,
+        const value_t * const __restrict__ entry1) const {
+
+        value_t a_dot_b = 0;
+
+        for (strde_t i = 0; i < stride; i++) {
+            const value_t residue = entry0[i]*entry1[i];
+            a_dot_b += residue;
+        }
+        a_dot_b = a_dot_b < 0 ? -a_dot_b : a_dot_b;
+        return std::acos(std::min(value_t(1),a_dot_b));
     }
 };
 
