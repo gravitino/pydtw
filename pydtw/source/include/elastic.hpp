@@ -58,7 +58,7 @@ value_t elastic_dtw(
 
     // backtracing needs quadratic memory: suppress if not needed
     if (compute_backtrace)
-        predec = new uint8_t[area];
+        predecs = new uint8_t[area];
 
     // initialize penalty matrix
     for (index_t j = 1; j < lane_j; j++)
@@ -81,9 +81,9 @@ value_t elastic_dtw(
                                         series1+(j-1)*metric.stride);
 
             // cache matrix entries
-            const diag = penalty[(i-1)*lane_j+(j-1)];
-            const abve = penalty[(i-1)*lane_j+(j+0)];
-            const left = penalty[(i-0)*lane_j+(j-1)];
+            const value_t diag = penalty[(i-1)*lane_j+(j-1)];
+            const value_t abve = penalty[(i-1)*lane_j+(j+0)];
+            const value_t left = penalty[(i-0)*lane_j+(j-1)];
 
             // prefer diagonal steps if tied
             value_t bsf_value = diag;
