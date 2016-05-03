@@ -28,7 +28,7 @@
 #include "host.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
-// lockstep measures: Euclidean
+// lockstep measures: L_2 norm induced Euclidean metric
 ///////////////////////////////////////////////////////////////////////////////
 
 double lockstepEuclidean1d(
@@ -184,7 +184,7 @@ float lockstepEuclideanNf(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// lockstep measures: Manhattan
+// lockstep measures: L_1 norm induced Manhattan metric
 ///////////////////////////////////////////////////////////////////////////////
 
 double lockstepManhattan1d(
@@ -337,4 +337,19 @@ float lockstepManhattanNf(
     return lockstep(series0, length0/stride,
                     series1, length1/stride,
                     metric_manhattan_multivariate<int>(stride));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// elastic measures: Euclidean-flavoured DTW similarity measure
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticEuclideanDTW1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1) {
+
+    return elastic_dtw(series0, length0,
+                       series1, length1,
+                       metric_euclidean_fixed<int, 1>());
 }
