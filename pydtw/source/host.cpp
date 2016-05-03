@@ -347,9 +347,25 @@ double elasticEuclideanDTW1d(
     double * series1,
     int      length1) {
 
-    return elastic_dtw(series0, length0,
-                       series1, length1,
-                       metric_euclidean_fixed<int, 1>());
+    std::vector<std::pair<int, int> > wpath;
+    typedef metric_euclidean_fixed<int, 1> dist;
+    return elastic_dtw<int, double, dist, 0, 0>(series0, length0,
+                                                series1, length1,
+                                                dist(), 0, wpath);
+}
+
+double elasticEuclideanCDTW1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window) {
+
+    std::vector<std::pair<int, int> > wpath;
+    typedef metric_euclidean_fixed<int, 1> dist;
+    return elastic_dtw<int, double, dist, 1, 0>(series0, length0,
+                                                series1, length1,
+                                                dist(), window, wpath);
 }
 
 double elasticEuclideanDTW1dBacktrace(
@@ -360,7 +376,39 @@ double elasticEuclideanDTW1dBacktrace(
     std::vector<std::pair<int, int> > & wpath) {
 
     typedef metric_euclidean_fixed<int, 1> dist;
-    return elastic_dtw_uc<int, double, dist, 0, 1>(series0, length0,
-                                                   series1, length1,
-                                                   dist(), 0, wpath);
+    return elastic_dtw<int, double, dist, 0, 1>(series0, length0,
+                                                series1, length1,
+                                                dist(), 0, wpath);
+}
+
+double elasticEuclideanCDTW1dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window,
+    std::vector<std::pair<int, int> > & wpath) {
+
+    typedef metric_euclidean_fixed<int, 1> dist;
+    return elastic_dtw<int, double, dist, 1, 1>(series0, length0,
+                                                series1, length1,
+                                                dist(), window, wpath);
+}
+
+double elasticEuclideanCDTW2dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window,
+    std::vector<std::pair<int, int> > & wpath) {
+
+    // sanity checks
+    assert(length0 % 2 == 0);
+    assert(length1 % 2 == 0);
+
+    typedef metric_euclidean_fixed<int, 2> dist;
+    return elastic_dtw<int, double, dist, 1, 1>(series0, length0/2,
+                                                series1, length1/2,
+                                                dist(), window, wpath);
 }

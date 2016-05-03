@@ -173,11 +173,34 @@ double elasticEuclideanDTW1d(
     double * series1,
     int      length1);
 
+double elasticEuclideanCDTW1d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window);
+
 double elasticEuclideanDTW1dBacktrace(
     double * series0,
     int      length0,
     double * series1,
     int      length1,
+    std::vector<std::pair<int, int> > & wpath);
+
+double elasticEuclideanCDTW1dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window,
+    std::vector<std::pair<int, int> > & wpath);
+
+double elasticEuclideanCDTW2dBacktrace(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window,
     std::vector<std::pair<int, int> > & wpath);
 
 #endif
