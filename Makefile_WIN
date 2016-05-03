@@ -1,0 +1,36 @@
+CXX=g++
+CXXFLAGS= -O3 -march=native -std=c++11
+SWIG=swig
+#OPENMPFLAGS= -fopenmp -D PYDTW_ENABLE_OPENMP
+#OPENMPLINK= -lgomp
+PYPATH=C:/Tools/WinPython-64bit-2.7.9.4/python-2.7.9.amd64
+
+PYTHONINCLUDE= -I $(PYPATH)/include -I $(PYPATH)/Lib/site-packages/numpy/core/include
+BASEDIR=./pydtw/source
+SOURCE=$(BASEDIR)/host.cpp \
+       $(BASEDIR)/host.hpp \
+       $(BASEDIR)/host.i
+
+all: $(BASEDIR)/_host.pyd
+
+$(BASEDIR)/_host.pyd: $(BASEDIR)/host.o $(BASEDIR)/host_wrap.o
+	$(CXX) -mdll $(BASEDIR)/host.o $(BASEDIR)/host_wrap.o -DMS_WIN64 -L $(PYPATH)/libs -lpython27 -o $(BASEDIR)/_host.pyd $(OPENMPLINK)	
+	rm -f $(BASEDIR)/host_wrap.cxx
+	rm -f $(BASEDIR)/*.o
+	rm -f $(BASEDIR)/*.pyc
+	rm -f pydtw/*.pyc
+
+$(BASEDIR)/host.o: $(SOURCE)
+	$(CXX) $(CXXFLAGS) -DMS_WIN64 -fPIC -c $(BASEDIR)/host.cpp -o $(BASEDIR)/host.o  $(OPENMPFLAGS)
+
+$(BASEDIR)/host_wrap.o: $(BASEDIR)/host_wrap.cpp
+	$(CXX) $(CXXFLAGS) -DMS_WIN64 -fPIC -c $(BASEDIR)/host_wrap.cxx $(PYTHONINCLUDE) -o $(BASEDIR)/host_wrap.o  $(OPENMPFLAGS)
+
+$(BASEDIR)/host_wrap.cpp: $(SOURCE)
+	$(SWIG) -python -c++ $(BASEDIR)/host.i
+
+clean:
+	rm -f $(BASEDIR)/host.py
+	rm -f $(BASEDIR)/*.pyd
+	rm -f $(BASEDIR)/*.pyc
+	rm -f $(BASEDIR)/*~

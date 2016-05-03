@@ -20,11 +20,14 @@ import sys
 ##############################################################################
 # host API
 ##############################################################################
-sys.path.append("./pydtw/source")
+sys.path.append("../pydtw/source") # execute in ./examples
+sys.path.append("./pydtw/source")  # execute in ./
 
 import host
 
 # high level support
-sys.path.append("./pydtw/host")
+sys.path.append("../pydtw/host") # execute in ./examples
+sys.path.append("./pydtw/host")  # execute in ./
+
 from host_lockstep import lockstepEuclidean, \
                           lockstepManhattan
