@@ -22,8 +22,7 @@
 // includes
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <cmath>                      // std::acos
-#include <algorithm>                  // std::min
+#include "mathematics.hpp"            // math functions
 #include "qualifiers.hpp"             // qualifiers
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -127,11 +126,10 @@ struct metric_manhattan_fixed {
 };
 
 template <
-    typename strde_t,
-    strde_t  strde=4>
+    typename strde_t>
 struct metric_quaternion_fixed {
 
-    static constexpr strde_t stride = strde;
+    static constexpr strde_t stride = 4;
 
     template <
         typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
@@ -139,14 +137,12 @@ struct metric_quaternion_fixed {
         const value_t * const __restrict__ entry0,
         const value_t * const __restrict__ entry1) const {
 
-        value_t a_dot_b = 0;
-
-        for (strde_t i = 0; i < stride; i++) {
-            const value_t residue = entry0[i]*entry1[i];
-            a_dot_b += residue;
-        }
-        a_dot_b = a_dot_b < 0 ? -a_dot_b : a_dot_b;
-        return std::acos(std::min(value_t(1),a_dot_b));
+        const value_t result = entry0[0]*entry1[0] + 
+                               entry0[1]*entry1[1] +
+                               entry0[2]*entry1[2] +
+                               entry0[3]*entry1[3];
+    
+        return pydtw_acos(pydtw_min(value_t(1), pydtw_abs(result)));
     }
 };
 
