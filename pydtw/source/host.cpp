@@ -69,8 +69,12 @@ double lockstepEuclidean3d(
     int      length1) {
 
     // sanity checks
+    assert(length0 == length1);
+    assert(length0 % 3 == 0);
 
-
+    return lockstep(series0, length0/3,
+                    series1, length1/3,
+                    metric_euclidean_fixed<int, 3>()) ;
 }
 
 double lockstepEuclidean4d(
