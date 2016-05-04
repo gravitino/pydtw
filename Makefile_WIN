@@ -1,8 +1,8 @@
 CXX=g++
-CXXFLAGS= -O3 -march=native -std=c++11
+CXXFLAGS= -O3 -march=native -std=c++11 -include cmath # cmath MUST be include BEFORE python headers (::hypot issue)
 SWIG=swig
-#OPENMPFLAGS= -fopenmp -D PYDTW_ENABLE_OPENMP
-#OPENMPLINK= -lgomp
+OPENMPFLAGS= -fopenmp -D PYDTW_ENABLE_OPENMP
+OPENMPLINK= -lgomp
 PYPATH=C:/Tools/WinPython-64bit-2.7.9.4/python-2.7.9.amd64
 
 PYTHONINCLUDE= -I $(PYPATH)/include -I $(PYPATH)/Lib/site-packages/numpy/core/include

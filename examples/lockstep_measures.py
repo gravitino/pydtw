@@ -26,6 +26,7 @@ import pydtw as pd
 
 # length of the processed arrays
 length = (2*3*4*5)*(1 << 20)
+print "length=", length
 
 # short cuts for the measures
 Euc, Man = pd.lockstepEuclidean, pd.lockstepManhattan

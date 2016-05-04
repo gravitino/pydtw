@@ -29,6 +29,7 @@ T = np.linspace(0, 1, 1024)
 X = np.cos(4*np.pi*T)
 Y = np.cos(4*np.pi*T**0.5)
 
+pl.figure(1)
 pl.plot(T, X)
 pl.plot(T, Y)
 pl.show()
@@ -42,6 +43,7 @@ print DTWback(X, Y, Path)
 
 I, J = zip(*list(Path))
 
+pl.figure(2)
 pl.plot(X[np.array(I)])
 pl.plot(Y[np.array(J)])
 pl.show()
