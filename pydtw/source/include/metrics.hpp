@@ -46,7 +46,7 @@ struct metric_euclidean_multivariate {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += residue*residue;
+            result += pydtw_hypot(residue);
         }
 
         return result;
@@ -70,7 +70,7 @@ struct metric_euclidean_fixed {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += residue*residue;
+            result += pydtw_hypot(residue);
         }
 
         return result;
@@ -94,7 +94,7 @@ struct metric_manhattan_multivariate {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += residue < 0 ? -residue : residue;
+            result += pydtw_abs(residue);
         }
 
         return result;
@@ -118,7 +118,7 @@ struct metric_manhattan_fixed {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += residue < 0 ? -residue : residue;
+            result += pydtw_abs(residue);
         }
 
         return result;
