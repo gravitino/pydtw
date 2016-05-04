@@ -46,7 +46,7 @@ struct metric_euclidean_multivariate {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += pydtw_hypot(residue);
+            result += pydtw_square(residue);
         }
 
         return result;
@@ -70,7 +70,7 @@ struct metric_euclidean_fixed {
 
         for (strde_t i = 0; i < stride; i++) {
             const value_t residue = entry0[i]-entry1[i];
-            result += pydtw_hypot(residue);
+            result += pydtw_square(residue);
         }
 
         return result;

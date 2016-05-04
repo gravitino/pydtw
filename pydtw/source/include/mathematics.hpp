@@ -34,7 +34,7 @@ value_t pydtw_abs(const value_t& x) {
 
 template <
     typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-value_t pydtw_hypot(const value_t& x) {
+value_t pydtw_square(const value_t& x) {
     return x*x;
 }
 
