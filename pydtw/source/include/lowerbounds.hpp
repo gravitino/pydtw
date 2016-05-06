@@ -23,6 +23,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <deque>
+#include "constants.hpp"
+#include "qualifiers.hpp"
+#include "mathematics.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // streamed windowed min max envelope
@@ -31,7 +34,7 @@
 template <
     typename strde_t,
     typename index_t,
-    typename value_t>
+    typename value_t> INLINE_QUALIFIERS
 void elastic_lemire_min_max(
     value_t * series0,
     value_t * env_lower,
@@ -95,5 +98,107 @@ void elastic_lemire_min_max(
         }
     }
 }
+
+template <
+    typename index_t,
+    typename value_t,
+    typename funct_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t elastic_LB_Kim4(
+    value_t * series0,
+    index_t   length0,
+    value_t * series1,
+    index_t   length1,
+    funct_t   metric) {
+
+    // convenience functions
+    const auto stride = metric.stride;
+    auto min3 = [](value_t& x0, value_t& x1, value_t& x2)
+                  { return pydtw_min(x0, pydtw_min(x1, x2)); };
+    auto min4 = [](value_t& x0, value_t& x1, value_t& x2, value_t x3)
+                  { return pydtw_min(x0, pydtw_min(x1, pydtw_min(x2, x3))); };
+
+    //four entries of query and subject
+    value_t * q0 = series0+0*stride;
+    value_t * q1 = series0+1*stride;
+    value_t * q2 = series0+2*stride;
+    value_t * q3 = series0+3*stride;
+    value_t * s0 = series1+0*stride;
+    value_t * s1 = series1+1*stride;
+    value_t * s2 = series1+2*stride;
+    value_t * s3 = series1+3*stride;
+
+    // linear memory penalty matrix
+    value_t p00, p01, p02, p03,
+            p10, p11, p12, p13, bsf, rst;
+
+    // relax first row
+    p00 = metric(q0, s0);
+    p01 = p00 + metric(q0, s1);
+    p02 = p01 + metric(q0, s2);
+    p03 = p02 + metric(q0, s3);
+    bsf = p03;
+
+    // relax second row
+    p10 = p00 + metric(q1, s0);
+    p11 = min3(p00, p01, p10) + metric(q1, s1);
+    p12 = min3(p01, p02, p11) + metric(q1, s2);
+    p13 = min3(p02, p03, p12) + metric(q1, s3);
+    bsf = pydtw_min(bsf, p13);
+
+    // relax third row
+    p00 = p10 + metric(q2, s0);
+    p01 = min3(p10, p11, p00) + metric(q2, s1);
+    p02 = min3(p11, p12, p01) + metric(q2, s2);
+    p03 = min3(p12, p13, p02) + metric(q2, s3);
+    bsf = pydtw_min(bsf, p03);
+
+    // relax fourth row
+    p10 = p00 + metric(q3, s0);
+    p11 = min3(p00, p01, p10) + metric(q3, s1);
+    p12 = min3(p01, p02, p11) + metric(q3, s2);
+    p13 = min3(p02, p03, p12) + metric(q3, s3);
+    rst = pydtw_min(bsf, min4(p10, p11, p12, p13));
+
+    // four entries of query and subject
+    q0 = series0+(length0-1)*stride;
+    q1 = series0+(length0-2)*stride;
+    q2 = series0+(length0-3)*stride;
+    q3 = series0+(length0-4)*stride;
+    s0 = series1+(length1-1)*stride;
+    s1 = series1+(length1-2)*stride;
+    s2 = series1+(length1-3)*stride;
+    s3 = series1+(length1-4)*stride;
+
+    // relax first row
+    p00 = metric(q0, s0);
+    p01 = p00 + metric(q0, s1);
+    p02 = p01 + metric(q0, s2);
+    p03 = p02 + metric(q0, s3);
+    bsf = p03;
+
+    // relax second row
+    p10 = p00 + metric(q1, s0);
+    p11 = min3(p00, p01, p10) + metric(q1, s1);
+    p12 = min3(p01, p02, p11) + metric(q1, s2);
+    p13 = min3(p02, p03, p12) + metric(q1, s3);
+    bsf = pydtw_min(bsf, p13);
+
+    // relax third row
+    p00 = p10 + metric(q2, s0);
+    p01 = min3(p10, p11, p00) + metric(q2, s1);
+    p02 = min3(p11, p12, p01) + metric(q2, s2);
+    p03 = min3(p12, p13, p02) + metric(q2, s3);
+    bsf = pydtw_min(bsf, p03);
+
+    // relax fourth row
+    p10 = p00 + metric(q3, s0);
+    p11 = min3(p00, p01, p10) + metric(q3, s1);
+    p12 = min3(p01, p02, p11) + metric(q3, s2);
+    p13 = min3(p02, p03, p12) + metric(q3, s3);
+    rst = pydtw_min(bsf, min4(p10, p11, p12, p13)) + rst;
+
+    return rst;
+}
+
 
 #endif
