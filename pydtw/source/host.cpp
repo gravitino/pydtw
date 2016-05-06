@@ -441,3 +441,30 @@ double elasticWarpingEnvelopeNd(
                            length0/stride, window, stride);
 
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// residue matrix for arbitrary local metrics
+///////////////////////////////////////////////////////////////////////////////
+
+double residuesMatrixEuclideanNd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    double * matrix,
+    int      dimen0,
+    int      dimen1,
+    int      stride) {
+
+    // sanity checks
+    assert(stride > 0);
+    assert(length0 > 0);
+    assert(length1 > 0);
+    assert(length0 % stride == 0);
+    assert(length1 % stride == 0);
+    assert(length0 / stride == dimen0);
+    assert(length1 / stride == dimen1);
+
+    residues_matrix(series0, series1, matrix, dimen0, dimen1,
+                    metric_euclidean_multivariate<int>(stride));
+}

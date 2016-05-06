@@ -40,10 +40,12 @@ namespace std {
 %apply (double* INPLACE_ARRAY1, int DIM1) {(double* series1, int length1)};
 %apply (double* INPLACE_ARRAY1, int DIM1) {(double* env_lower, int len_lower)};
 %apply (double* INPLACE_ARRAY1, int DIM1) {(double* env_upper, int len_upper)};
+%apply (double* INPLACE_ARRAY2, int DIM1, int DIM2) {(double* matrix, int dimen0, int dimen1)};
 
 %apply (float* INPLACE_ARRAY1, int DIM1) {(float* series0, int length0)};
 %apply (float* INPLACE_ARRAY1, int DIM1) {(float* series1, int length1)};
 %apply (float* INPLACE_ARRAY1, int DIM1) {(float* env_lower, int len_lower)};
 %apply (float* INPLACE_ARRAY1, int DIM1) {(float* env_upper, int len_upper)};
+%apply (float* INPLACE_ARRAY2, int DIM1, int DIM2) {(float* matrix, int dimen0, int dimen1)};
 
 %include "host.hpp"

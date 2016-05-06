@@ -26,7 +26,7 @@ import pydtw as pd
 import pylab as pl
 
 # number of samples and warping window
-length = 1024
+length = 1 << 10
 window = int(0.2*length) # 20% relative warping window
 
 # create two spirals (array of 2D struct)
@@ -56,15 +56,29 @@ UY = np.zeros(Y.shape)
 pd.host.elasticWarpingEnvelopeNd(X, LX, UX, window, 2)
 pd.host.elasticWarpingEnvelopeNd(Y, LY, UY, window, 2)
 
-# plot the alignment
+# compute the matrix of residues
+D = np.zeros((len(X)/2, len(Y)/2))
+pd.host.residuesMatrixEuclideanNd(X, Y, D, 2);
+
+# plot the alignment over spatial domain
 pl.figure(1)
 for i, j in DTWpath:
     pl.plot([X[2*i], Y[2*j]], [X[2*i+1], Y[2*j+1]], color="grey")
 pl.plot(X[0::2], X[1::2])
 pl.plot(Y[0::2], Y[1::2])
 
-# plot warping envelopes
+# plot alignment over time domain
 pl.figure(2)
+
+# the matrix of residues
+pl.imshow(D)
+
+# please not J: x-axis, I: y-axis
+I, J = zip(*DTWpath)
+pl.plot(J, I, color="red")
+
+# plot warping envelopes
+pl.figure(3)
 pl.subplot(221)
 pl.plot( X[0::2])
 pl.plot(LX[0::2])

@@ -31,6 +31,9 @@
 // elastic measures
 #include "include/elastic.hpp"
 
+// residue matrix
+#include "include/residues.hpp"
+
 ///////////////////////////////////////////////////////////////////////////////
 // lockstep measures: L_2 norm induced Euclidean metric
 ///////////////////////////////////////////////////////////////////////////////
@@ -217,4 +220,18 @@ double elasticWarpingEnvelopeNd(
     int      window,
     int      stride);
 
+///////////////////////////////////////////////////////////////////////////////
+// residue matrix for arbitrary local metrics
+///////////////////////////////////////////////////////////////////////////////
+
+double residuesMatrixEuclideanNd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    double * matrix,
+    int      dimen0,
+    int      dimen1,
+    int      stride);
+    
 #endif
