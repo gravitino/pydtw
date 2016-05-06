@@ -203,4 +203,18 @@ double elasticEuclideanCDTW2dBacktrace(
     int      window,
     std::vector<std::pair<int, int> > & wpath);
 
+///////////////////////////////////////////////////////////////////////////////
+// elastic measures: LB_Keogh envelopes using Lemire efficient streamed min/max
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticWarpingEnvelopeNd(
+    double * series0,
+    int      length0,
+    double * env_lower,
+    int      len_lower,
+    double * env_upper,
+    int      len_upper,
+    int      window,
+    int      stride);
+
 #endif

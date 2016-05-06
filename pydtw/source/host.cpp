@@ -416,3 +416,28 @@ double elasticEuclideanCDTW2dBacktrace(
                                                 series1, length1/2,
                                                 dist(), window, wpath);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// elastic measures: LB_Keogh envelopes using Lemire efficient streamed min/max
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticWarpingEnvelopeNd(
+    double * series0,
+    int      length0,
+    double * env_lower,
+    int      len_lower,
+    double * env_upper,
+    int      len_upper,
+    int      window,
+    int      stride) {
+
+    // sanity checks
+    assert(stride > 0);
+    assert(window >= 0);
+    assert(length0 % stride == 0);
+    assert(length0 == len_lower && len_lower == len_upper);
+
+    elastic_lemire_min_max(series0, env_lower, env_upper,
+                           length0/stride, window, stride);
+
+}

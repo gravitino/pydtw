@@ -34,6 +34,7 @@
 #include <cstdint>                       // uint8_t
 #include <vector>                        // std::vector
 #include "constants.hpp"                 // constants
+#include "lowerbounds.hpp"               // lemire_min_max 
 
 ///////////////////////////////////////////////////////////////////////////////
 // elastic measures
