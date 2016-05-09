@@ -31,41 +31,41 @@ window = int(0.2*length) # 20% relative warping window
 
 # create two spirals (array of 2D struct)
 T = np.linspace(0, 1, length)
-X = np.zeros(2*length)
-Y = np.zeros(2*length)
+A = np.zeros(2*length)
+B = np.zeros(2*length)
 
-X[0::2] = T*np.cos(6*np.pi*T)
-X[1::2] = T*np.sin(6*np.pi*T)
+A[0::2] = T*np.cos(6*np.pi*T)
+A[1::2] = T*np.sin(6*np.pi*T)
 
-Y[0::2] = T*np.cos(6*np.pi*T**0.5)
-Y[1::2] = T*np.sin(6*np.pi*T**0.5)
+B[0::2] = T*np.cos(6*np.pi*T**0.5)
+B[1::2] = T*np.sin(6*np.pi*T**0.5)
 
 # compute best DTW alignment in 2D
 DTWback = pd.host.elasticEuclideanCDTW2dBacktrace
 DTWpath = pd.host.WarpingPath()
-distance = DTWback(X, Y, window, DTWpath)
+distance = DTWback(A, B, window, DTWpath)
 print distance
 
 # compute warping envelopes
-LX = np.zeros(X.shape)
-UX = np.zeros(X.shape)
-LY = np.zeros(Y.shape)
-UY = np.zeros(Y.shape)
+LA = np.zeros(A.shape)
+UA = np.zeros(A.shape)
+LB = np.zeros(B.shape)
+UB = np.zeros(B.shape)
 
 # compute warping envelopes
-pd.host.elasticWarpingEnvelopeNd(X, LX, UX, window, 2)
-pd.host.elasticWarpingEnvelopeNd(Y, LY, UY, window, 2)
+pd.host.elasticWarpingEnvelopeNd(A, LA, UA, window, 2)
+pd.host.elasticWarpingEnvelopeNd(B, LB, UB, window, 2)
 
 # compute the matrix of residues
-D = np.zeros((len(X)/2, len(Y)/2))
-pd.host.residuesMatrixEuclideanNd(X, Y, D, 2);
+D = np.zeros((len(A)/2, len(B)/2))
+pd.host.residuesMatrixEuclideanNd(A, B, D, 2);
 
 # plot the alignment over spatial domain
 pl.figure(1)
 for i, j in DTWpath:
-    pl.plot([X[2*i], Y[2*j]], [X[2*i+1], Y[2*j+1]], color="grey")
-pl.plot(X[0::2], X[1::2])
-pl.plot(Y[0::2], Y[1::2])
+    pl.plot([A[2*i], B[2*j]], [A[2*i+1], B[2*j+1]], color="grey")
+pl.plot(A[0::2], A[1::2])
+pl.plot(B[0::2], B[1::2])
 
 # plot alignment over time domain
 pl.figure(2)
@@ -80,23 +80,23 @@ pl.plot(J, I, color="red")
 # plot warping envelopes
 pl.figure(3)
 pl.subplot(221)
-pl.plot( X[0::2])
-pl.plot(LX[0::2])
-pl.plot(UX[0::2])
+pl.plot( A[0::2])
+pl.plot(LA[0::2])
+pl.plot(UA[0::2])
 
 pl.subplot(222)
-pl.plot( X[1::2])
-pl.plot(LX[1::2])
-pl.plot(UX[1::2])
+pl.plot( A[1::2])
+pl.plot(LA[1::2])
+pl.plot(UA[1::2])
 
 pl.subplot(223)
-pl.plot( Y[0::2])
-pl.plot(LY[0::2])
-pl.plot(UY[0::2])
+pl.plot( B[0::2])
+pl.plot(LB[0::2])
+pl.plot(UB[0::2])
 
 pl.subplot(224)
-pl.plot( Y[1::2])
-pl.plot(LY[1::2])
-pl.plot(UY[1::2])
+pl.plot( B[1::2])
+pl.plot(LB[1::2])
+pl.plot(UB[1::2])
 
 pl.show()
