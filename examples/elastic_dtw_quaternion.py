@@ -65,12 +65,16 @@ S = subject_raw.flatten()
 QUERY_NUMBER = 8
 
 start = shape_indices_open_fridge[QUERY_NUMBER][0]
-end = shape_indices_open_fridge[QUERY_NUMBER][1]
-Q = np.copy(S[start*stride:end*stride])
+end =   shape_indices_open_fridge[QUERY_NUMBER][1]
+Q = np.copy(S[start*stride:end*stride]) # COPY (!!!) query
+
+L = len(Q)/stride
+N = len(S)/stride
+w = L/10
 
 # alienate query
 p, sigma = 1.5, 0.05
-T = np.linspace(0, 1, len(Q)/stride)
+T = np.linspace(0, 1, L)
 step_size = 1 # -1 => invert shape
 Q[0::stride] = np.interp(T**p, T, Q[0::stride])[::step_size]
 Q[1::stride] = np.interp(T**p, T, Q[1::stride])[::step_size]
@@ -78,7 +82,7 @@ Q[2::stride] = np.interp(T**p, T, Q[2::stride])[::step_size]
 Q[3::stride] = np.interp(T**p, T, Q[3::stride])[::step_size]
 # restore normalization
 Q += np.random.normal(0, sigma, len(Q))
-for i in range(len(Q)/stride):
+for i in range(L):
     norm = np.sqrt(np.sum(Q[i*stride:(i+1)*stride]**2))
     Q[i*stride + 0] /= norm
     Q[i*stride + 1] /= norm
@@ -88,20 +92,17 @@ for i in range(len(Q)/stride):
 
 best_value = float("infinity")
 best_index = -1
-l = len(Q)/stride
-N = len(S)/stride
-offset = 0
 
-w = l/10
+offset = 0
 
 DTW = pd.host.elasticQuaternionCDTWd
 
-for i in range(offset, N-l):     
+for i in range(offset, N-L):     
     if (i % 10000 == 0):
-        print i, "/", N-l, "(", 100.0*i/(N-l), "%)"
-        print best_value, "@ [", best_index, ",", best_index + l, "]"
+        print i, "/", N-L, "(", 100.0*i/(N-L), "%)"
+        print best_value, "@ [", best_index, ",", best_index + L, "]"
     start = i
-    end = i + l
+    end = i + L
     
     C = S[start*stride:end*stride]
     value = DTW(Q,C,w)
@@ -109,15 +110,14 @@ for i in range(offset, N-l):
         best_value = value
         best_index = i
 
-print best_value, "@ [", best_index, ",", best_index + l, "]"
+print best_value, "@ [", best_index, ",", best_index + L, "]"
 
 ## ==========
 ## upper plot
 ## ==========
 ax1 = pl.subplot(211)
 pl.title("Subject")
-
-plot_range(S, best_index, l, stride)
+plot_range(S, best_index, L, stride)
 
 
 ## ==========
@@ -125,6 +125,6 @@ plot_range(S, best_index, l, stride)
 ## ==========
 ax2 = pl.subplot(212, sharex=ax1, sharey=ax1)
 pl.title("Query")
-plot_range(Q, 0, len(Q)/stride, stride)
+plot_range(Q, 0, L, stride)
 
 pl.show()
