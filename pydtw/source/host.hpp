@@ -167,6 +167,22 @@ float lockstepManhattanNf(
     int     stride);
 
 ///////////////////////////////////////////////////////////////////////////////
+// lockstep measures: quaternion metric
+///////////////////////////////////////////////////////////////////////////////
+
+float lockstepQuaternionf(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1);
+
+double lockstepQuaterniond(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1);
+
+///////////////////////////////////////////////////////////////////////////////
 // elastic measures: Euclidean-flavoured DTW similarity measure
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -207,10 +223,21 @@ double elasticEuclideanCDTW2dBacktrace(
     std::vector<std::pair<int, int> > & wpath);
 
 ///////////////////////////////////////////////////////////////////////////////
+// elastic measures: quaternion DTW similarity measure
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticQuaternionCDTWd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window);
+
+///////////////////////////////////////////////////////////////////////////////
 // elastic measures: LB_Keogh envelopes using Lemire efficient streamed min/max
 ///////////////////////////////////////////////////////////////////////////////
 
-double elasticWarpingEnvelopeNd(
+void elasticWarpingEnvelopeNd(
     double * series0,
     int      length0,
     double * env_lower,
@@ -224,7 +251,7 @@ double elasticWarpingEnvelopeNd(
 // residue matrix for arbitrary local metrics
 ///////////////////////////////////////////////////////////////////////////////
 
-double residuesMatrixEuclideanNd(
+void residuesMatrixEuclideanNd(
     double * series0,
     int      length0,
     double * series1,

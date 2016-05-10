@@ -342,6 +342,44 @@ float lockstepManhattanNf(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// lockstep measures: quaternion metric
+///////////////////////////////////////////////////////////////////////////////
+
+float lockstepQuaternionf(
+    float * series0,
+    int     length0,
+    float * series1,
+    int     length1) {
+
+    constexpr int stride = 4;
+
+    // sanity checks
+    assert(length0 == length1);
+    assert(length0 % stride == 0);
+
+    return lockstep(series0, length0/stride,
+                    series1, length1/stride,
+                    metric_quaternion_fixed<int>());
+}
+
+double lockstepQuaterniond(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1) {
+
+    constexpr int stride = 4;
+
+    // sanity checks
+    assert(length0 == length1);
+    assert(length0 % stride == 0);
+
+    return lockstep(series0, length0/stride,
+                    series1, length1/stride,
+                    metric_quaternion_fixed<int>());
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // elastic measures: Euclidean-flavoured DTW similarity measure
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -418,10 +456,34 @@ double elasticEuclideanCDTW2dBacktrace(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// elastic measures: quaternion DTW similarity measure
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticQuaternionCDTWd(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1,
+    int      window) {
+
+    constexpr int stride = 4;
+
+    // sanity checks
+    assert(length0 % stride == 0);
+    assert(length1 % stride == 0);
+
+    std::vector<std::pair<int, int> > wpath;
+    typedef metric_quaternion_fixed<int> dist;
+    return elastic_dtw<int, double, dist, 1, 0>(series0, length0/stride,
+                                                series1, length1/stride,
+                                                dist(), window, wpath);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // elastic measures: LB_Keogh envelopes using Lemire efficient streamed min/max
 ///////////////////////////////////////////////////////////////////////////////
 
-double elasticWarpingEnvelopeNd(
+void elasticWarpingEnvelopeNd(
     double * series0,
     int      length0,
     double * env_lower,
@@ -446,7 +508,7 @@ double elasticWarpingEnvelopeNd(
 // residue matrix for arbitrary local metrics
 ///////////////////////////////////////////////////////////////////////////////
 
-double residuesMatrixEuclideanNd(
+void residuesMatrixEuclideanNd(
     double * series0,
     int      length0,
     double * series1,
