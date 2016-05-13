@@ -50,7 +50,7 @@ shape_indices_close_fridge = [[1636, 1718], [4398, 4464], [6795, 6867], [9320, 9
 ## read data
 ## =========
 
-subject_raw = read("Y:/MTMRepository/__BIG_DATA__/Opportunity/S1-Drill.dat", [72,73,74,75]) # RLA quaternion
+subject_raw = read("../data/Opportunity/S1-Drill.dat", [72,73,74,75]) # RLA quaternion
 
 # map data to [-1,1]
 
