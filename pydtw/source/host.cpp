@@ -505,6 +505,28 @@ void elasticWarpingEnvelopeNd(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// elastic measures: LB_Kim
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticLBKim4d(
+    double * series0,
+    int      length0,
+    double * series1,
+    int      length1) {
+
+    constexpr int stride = 4;
+
+    // sanity checks
+    assert(length0 % stride == 0);
+    assert(length1 % stride == 0);
+    assert(length0 >= 8*stride); // 4 points at the beginning + 4 points at the end
+    assert(length1 >= 8*stride); // dito
+
+    typedef metric_quaternion_fixed<int> dist;
+    return elastic_LB_Kim4<int, double, dist>(series0, length0/stride, series1, length1/stride, dist());
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // residue matrix for arbitrary local metrics
 ///////////////////////////////////////////////////////////////////////////////
 

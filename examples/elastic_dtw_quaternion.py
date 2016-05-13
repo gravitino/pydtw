@@ -90,13 +90,15 @@ for i in range(L):
     Q[i*stride + 3] /= norm
 
 
-best_value = float("infinity")
-best_index = -1
-
+DTW = pd.host.elasticQuaternionCDTWd
+LB_Kim = pd.host.elasticLBKim4d
 offset = 0
 
-DTW = pd.host.elasticQuaternionCDTWd
-
+counter_Kim = 0
+counter_DTW = 0
+counter_total = 0
+best_value = float("infinity")
+best_index = -1
 for i in range(offset, N-L):     
     if (i % 10000 == 0):
         print i, "/", N-L, "(", 100.0*i/(N-L), "%)"
@@ -105,12 +107,23 @@ for i in range(offset, N-L):
     end = i + L
     
     C = S[start*stride:end*stride]
-    value = DTW(Q,C,w)
+
+    value = LB_Kim(Q,C)
     if (value < best_value):
-        best_value = value
-        best_index = i
+        value = DTW(Q,C,w)
+        counter_DTW += 1
+        if (value < best_value):
+            best_value = value
+            best_index = i
+    else:
+        counter_Kim += 1
+    
+    counter_total += 1
 
 print best_value, "@ [", best_index, ",", best_index + L, "]"
+print "DTW: ", counter_DTW
+print "Kim: ", counter_Kim
+print "total: ", counter_total
 
 ## ==========
 ## upper plot
