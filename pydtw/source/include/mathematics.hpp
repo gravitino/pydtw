@@ -26,6 +26,16 @@
 
 #include "qualifiers.hpp"
 
+///////////////////////////////////////////////////////////////////////////////
+// misc functions
+///////////////////////////////////////////////////////////////////////////////
+
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_acos(const value_t& x) {
+    return std::acos(x);
+}
+
 template <
     typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 value_t pydtw_abs(const value_t& x) {
@@ -38,11 +48,31 @@ value_t pydtw_square(const value_t& x) {
     return x*x;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// minimum
+///////////////////////////////////////////////////////////////////////////////
+
 template <
     typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
 value_t pydtw_min(const value_t& x, const value_t& y) {
     return x < y ? x : y;
 }
+
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_min3(const value_t& x0, const value_t& x1, const value_t& x2) {
+    return pydtw_min(x0, pydtw_min(x1, x2));
+}
+
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_min4(const value_t& x0, const value_t& x1, const value_t& x2, const value_t& x3) {
+    return  pydtw_min(x0, pydtw_min(x1, pydtw_min(x2, x3)));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// maximum
+///////////////////////////////////////////////////////////////////////////////
 
 template <
     typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
@@ -52,8 +82,15 @@ value_t pydtw_max(const value_t& x, const value_t& y) {
 
 template <
     typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
-value_t pydtw_acos(const value_t& x) {
-    return std::acos(x);
+value_t pydtw_max3(const value_t& x0, const value_t& x1, const value_t& x2) {
+    return pydtw_max(x0, pydtw_max(x1, x2));
 }
+
+template <
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t pydtw_max4(const value_t& x0, const value_t& x1, const value_t& x2, const value_t& x3) {
+    return  pydtw_max(x0, pydtw_max(x1, pydtw_max(x2, x3)));
+}
+
 
 #endif

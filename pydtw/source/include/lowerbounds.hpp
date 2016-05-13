@@ -110,12 +110,8 @@ value_t elastic_LB_Kim4(
     index_t   length1,
     funct_t   metric) {
 
-    // convenience functions
+    // stride
     const auto stride = metric.stride;
-    auto min3 = [](value_t& x0, value_t& x1, value_t& x2)
-                  { return pydtw_min(x0, pydtw_min(x1, x2)); };
-    auto min4 = [](value_t& x0, value_t& x1, value_t& x2, value_t x3)
-                  { return pydtw_min(x0, pydtw_min(x1, pydtw_min(x2, x3))); };
 
     //four entries of query and subject
     value_t * q0 = series0+0*stride;
@@ -140,24 +136,24 @@ value_t elastic_LB_Kim4(
 
     // relax second row
     p10 = p00 + metric(q1, s0);
-    p11 = min3(p00, p01, p10) + metric(q1, s1);
-    p12 = min3(p01, p02, p11) + metric(q1, s2);
-    p13 = min3(p02, p03, p12) + metric(q1, s3);
+    p11 = pydtw_min3(p00, p01, p10) + metric(q1, s1);
+    p12 = pydtw_min3(p01, p02, p11) + metric(q1, s2);
+    p13 = pydtw_min3(p02, p03, p12) + metric(q1, s3);
     bsf = pydtw_min(bsf, p13);
 
     // relax third row
     p00 = p10 + metric(q2, s0);
-    p01 = min3(p10, p11, p00) + metric(q2, s1);
-    p02 = min3(p11, p12, p01) + metric(q2, s2);
-    p03 = min3(p12, p13, p02) + metric(q2, s3);
+    p01 = pydtw_min3(p10, p11, p00) + metric(q2, s1);
+    p02 = pydtw_min3(p11, p12, p01) + metric(q2, s2);
+    p03 = pydtw_min3(p12, p13, p02) + metric(q2, s3);
     bsf = pydtw_min(bsf, p03);
 
     // relax fourth row
     p10 = p00 + metric(q3, s0);
-    p11 = min3(p00, p01, p10) + metric(q3, s1);
-    p12 = min3(p01, p02, p11) + metric(q3, s2);
-    p13 = min3(p02, p03, p12) + metric(q3, s3);
-    rst = pydtw_min(bsf, min4(p10, p11, p12, p13));
+    p11 = pydtw_min3(p00, p01, p10) + metric(q3, s1);
+    p12 = pydtw_min3(p01, p02, p11) + metric(q3, s2);
+    p13 = pydtw_min3(p02, p03, p12) + metric(q3, s3);
+    rst = pydtw_min(bsf, pydtw_min4(p10, p11, p12, p13));
 
     // four entries of query and subject
     q0 = series0+(length0-1)*stride;
@@ -178,24 +174,24 @@ value_t elastic_LB_Kim4(
 
     // relax second row
     p10 = p00 + metric(q1, s0);
-    p11 = min3(p00, p01, p10) + metric(q1, s1);
-    p12 = min3(p01, p02, p11) + metric(q1, s2);
-    p13 = min3(p02, p03, p12) + metric(q1, s3);
+    p11 = pydtw_min3(p00, p01, p10) + metric(q1, s1);
+    p12 = pydtw_min3(p01, p02, p11) + metric(q1, s2);
+    p13 = pydtw_min3(p02, p03, p12) + metric(q1, s3);
     bsf = pydtw_min(bsf, p13);
 
     // relax third row
     p00 = p10 + metric(q2, s0);
-    p01 = min3(p10, p11, p00) + metric(q2, s1);
-    p02 = min3(p11, p12, p01) + metric(q2, s2);
-    p03 = min3(p12, p13, p02) + metric(q2, s3);
+    p01 = pydtw_min3(p10, p11, p00) + metric(q2, s1);
+    p02 = pydtw_min3(p11, p12, p01) + metric(q2, s2);
+    p03 = pydtw_min3(p12, p13, p02) + metric(q2, s3);
     bsf = pydtw_min(bsf, p03);
 
     // relax fourth row
     p10 = p00 + metric(q3, s0);
-    p11 = min3(p00, p01, p10) + metric(q3, s1);
-    p12 = min3(p01, p02, p11) + metric(q3, s2);
-    p13 = min3(p02, p03, p12) + metric(q3, s3);
-    rst = pydtw_min(bsf, min4(p10, p11, p12, p13)) + rst;
+    p11 = pydtw_min3(p00, p01, p10) + metric(q3, s1);
+    p12 = pydtw_min3(p01, p02, p11) + metric(q3, s2);
+    p13 = pydtw_min3(p02, p03, p12) + metric(q3, s3);
+    rst = pydtw_min(bsf, pydtw_min4(p10, p11, p12, p13)) + rst;
 
     return rst;
 }
