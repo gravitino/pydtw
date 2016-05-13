@@ -9,6 +9,7 @@ sys.path.append(parentdir)
 import numpy as np
 import pydtw as pd
 import pylab as pl
+import time
 
 #reads csv-File and returns an np.array (n-dims)
 def read(filename, columns, splitter=None, verbose=False):
@@ -28,17 +29,30 @@ def read(filename, columns, splitter=None, verbose=False):
     print "...done."
     return np.array(result)
 
+# plot all components (e.g. 4 for quaternions) from a given range on the stream
 def plot_range(subject, start, length, stride):
     end = start + length
-    w = subject[start*stride+0:end*stride+0:stride]
-    x = subject[start*stride+1:end*stride+1:stride]
-    y = subject[start*stride+2:end*stride+2:stride]
-    z = subject[start*stride+3:end*stride+3:stride]
-    pl.plot(w)
-    pl.plot(x)
-    pl.plot(y)
-    pl.plot(z)
+    for component in range(stride):
+        pl.plot(subject[start*stride+component:end*stride+component:stride])
 
+# alienate query: warp time axis and add random noise
+# p        : warping parameter
+# sigma    : standard deviation for Gauss noise
+# step_size: -1 => invert shape
+def alienate_query(Q, stride, p, sigma, step_size = 1):
+    T = np.linspace(0, 1, L)
+    Q[0::stride] = np.interp(T**p, T, Q[0::stride])[::step_size]
+    Q[1::stride] = np.interp(T**p, T, Q[1::stride])[::step_size]
+    Q[2::stride] = np.interp(T**p, T, Q[2::stride])[::step_size]
+    Q[3::stride] = np.interp(T**p, T, Q[3::stride])[::step_size]
+    # restore normalization
+    Q += np.random.normal(0, sigma, len(Q))
+    for i in range(L):
+        norm = np.sqrt(np.sum(Q[i*stride:(i+1)*stride]**2))
+        Q[i*stride + 0] /= norm
+        Q[i*stride + 1] /= norm
+        Q[i*stride + 2] /= norm
+        Q[i*stride + 3] /= norm
 
 ## Main-------------------------------------------------------------------------
 
@@ -53,52 +67,43 @@ shape_indices_close_fridge = [[1636, 1718], [4398, 4464], [6795, 6867], [9320, 9
 subject_raw = read("../data/Opportunity/S1-Drill.dat", [72,73,74,75]) # RLA quaternion
 
 # map data to [-1,1]
-
 norms = np.sqrt(np.sum(subject_raw**2, axis=1))
 subject_raw[:, 0] /= norms
 subject_raw[:, 1] /= norms
 subject_raw[:, 2] /= norms
 subject_raw[:, 3] /= norms
 
+# interleave quaternion components of the input data for use with pydtw
 S = subject_raw.flatten()
 
+# select query
 QUERY_NUMBER = 8
-
 start = shape_indices_open_fridge[QUERY_NUMBER][0]
 end =   shape_indices_open_fridge[QUERY_NUMBER][1]
 Q = np.copy(S[start*stride:end*stride]) # COPY (!!!) query
 
+# query and stream length
 L = len(Q)/stride
 N = len(S)/stride
+# cDTW window size
 w = L/10
 
-# alienate query
-p, sigma = 1.5, 0.05
-T = np.linspace(0, 1, L)
-step_size = 1 # -1 => invert shape
-Q[0::stride] = np.interp(T**p, T, Q[0::stride])[::step_size]
-Q[1::stride] = np.interp(T**p, T, Q[1::stride])[::step_size]
-Q[2::stride] = np.interp(T**p, T, Q[2::stride])[::step_size]
-Q[3::stride] = np.interp(T**p, T, Q[3::stride])[::step_size]
-# restore normalization
-Q += np.random.normal(0, sigma, len(Q))
-for i in range(L):
-    norm = np.sqrt(np.sum(Q[i*stride:(i+1)*stride]**2))
-    Q[i*stride + 0] /= norm
-    Q[i*stride + 1] /= norm
-    Q[i*stride + 2] /= norm
-    Q[i*stride + 3] /= norm
+alienate_query(Q,stride,1.5,0.05)
 
-
+# select distance measure from pydtw
 DTW = pd.host.elasticQuaternionCDTWd
 LB_Kim = pd.host.elasticLBKim4d
 offset = 0
 
+# pruning power counters
 counter_Kim = 0
 counter_DTW = 0
 counter_total = 0
+# init past values
 best_value = float("infinity")
 best_index = -1
+# start time measurement
+start_time = time.time()
 for i in range(offset, N-L):     
     if (i % 10000 == 0):
         print i, "/", N-L, "(", 100.0*i/(N-L), "%)"
@@ -120,10 +125,14 @@ for i in range(offset, N-L):
     
     counter_total += 1
 
+# end time measurement
+end_time = time.time();
+# print results
 print best_value, "@ [", best_index, ",", best_index + L, "]"
 print "DTW: ", counter_DTW
 print "Kim: ", counter_Kim
 print "total: ", counter_total
+print "time needed: ", end_time - start_time, "s"
 
 ## ==========
 ## upper plot
