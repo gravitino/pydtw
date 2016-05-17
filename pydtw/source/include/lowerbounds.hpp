@@ -196,5 +196,34 @@ value_t elastic_LB_Kim4(
     return rst;
 }
 
+template <
+    typename index_t,
+    typename value_t> INLINE_QUALIFIERS ARCHITECTURE_QUALIFIERS
+value_t elastic_LB_Keogh_quaternion(
+    value_t * env_lower,
+    index_t   len_lower,
+    value_t * env_upper,
+    index_t   len_upper,
+    value_t * series0,
+    index_t   length0) {
+
+    value_t result = 0;
+
+    const index_t stride = 4;
+
+    for (index_t i = 0; i < length0; ++i) {
+        value_t lo = 0;
+        value_t hi = 0;
+        for (index_t j = 0; j < stride; ++j) {
+            index_t index = i*stride + j;
+            value_t value0 = env_lower[index]*series0[index];
+            value_t value1 = env_upper[index]*series0[index];
+            lo += pydtw_min(value0, value1);
+            hi += pydtw_max(value0, value1);
+        }
+        result += pydtw_acos(pydtw_min(pydtw_max(pydtw_abs(lo), pydtw_abs(hi)), value_t(1)));
+    }
+    return result;
+}
 
 #endif

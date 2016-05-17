@@ -88,15 +88,22 @@ N = len(S)/stride
 # cDTW window size
 w = L/10
 
+# make envelope from Q for LB_Keogh
+envelope_Q_U = np.zeros(len(Q))
+envelope_Q_L = np.zeros(len(Q))
+pd.host.elasticWarpingEnvelopeNd(Q, envelope_Q_L, envelope_Q_U, w, stride)
+
 alienate_query(Q,stride,1.5,0.05)
 
 # select distance measure from pydtw
 DTW = pd.host.elasticQuaternionCDTWd
 LB_Kim = pd.host.elasticLBKim4d
+LB_Keogh = pd.host.elasticLBKeogh4d
 offset = 0
 
 # pruning power counters
 counter_Kim = 0
+counter_Keogh = 0
 counter_DTW = 0
 counter_total = 0
 # init past values
@@ -115,11 +122,15 @@ for i in range(offset, N-L):
 
     value = LB_Kim(Q,C)
     if (value < best_value):
-        value = DTW(Q,C,w)
-        counter_DTW += 1
+        value = LB_Keogh(envelope_Q_L, envelope_Q_U, C)
         if (value < best_value):
-            best_value = value
-            best_index = i
+            value = DTW(Q,C,w)
+            counter_DTW += 1
+            if (value < best_value):
+                best_value = value
+                best_index = i
+        else:
+            counter_Keogh += 1
     else:
         counter_Kim += 1
     
@@ -129,9 +140,10 @@ for i in range(offset, N-L):
 end_time = time.time();
 # print results
 print best_value, "@ [", best_index, ",", best_index + L, "]"
-print "DTW: ", counter_DTW
 print "Kim: ", counter_Kim
-print "total: ", counter_total
+print "Keogh: ", counter_Keogh
+print "DTW: ", counter_DTW
+print "total: ", counter_total, "( should be ==", counter_Kim + counter_Keogh + counter_DTW, ")"
 print "time needed: ", end_time - start_time, "s"
 
 ## ==========

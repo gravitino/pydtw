@@ -428,6 +428,10 @@ def elasticLBKim4d(series0, series1):
     return _host.elasticLBKim4d(series0, series1)
 elasticLBKim4d = _host.elasticLBKim4d
 
+def elasticLBKeogh4d(env_lower, env_upper, series0):
+    return _host.elasticLBKeogh4d(env_lower, env_upper, series0)
+elasticLBKeogh4d = _host.elasticLBKeogh4d
+
 def residuesMatrixEuclideanNd(series0, series1, matrix, stride):
     return _host.residuesMatrixEuclideanNd(series0, series1, matrix, stride)
 residuesMatrixEuclideanNd = _host.residuesMatrixEuclideanNd

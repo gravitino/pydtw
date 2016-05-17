@@ -527,6 +527,29 @@ double elasticLBKim4d(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// elastic measures: LB_Keogh
+///////////////////////////////////////////////////////////////////////////////
+
+double elasticLBKeogh4d(
+    double * env_lower,
+    int      len_lower,
+    double * env_upper,
+    int      len_upper,
+    double * series0,
+    int      length0) {
+
+    constexpr int stride = 4;
+
+    // sanity checks
+    assert((len_lower == length0) && (len_upper == length0));
+    assert(length0 % stride == 0);
+
+    return elastic_LB_Keogh_quaternion<int, double>(env_lower, len_lower/stride,
+                                                    env_upper, len_upper/stride,
+                                                    series0, length0/stride);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // residue matrix for arbitrary local metrics
 ///////////////////////////////////////////////////////////////////////////////
 
