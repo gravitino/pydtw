@@ -5,5 +5,7 @@ lightweight unconstrained and constrained Dynamic Time Warping bindings for Pyth
 
 FEATURES
 
-o full and constrained DTW measure (example.py)
-o LB_Keogh lower bounding techniques (example2.py)
+- full and constrained DTW measure (example.py)
+- LB_Keogh lower bounding techniques (example2.py)
+
+Have a look at the development branch featuring native numpy support, multivariate measues etc. 
